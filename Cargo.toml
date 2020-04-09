@@ -1,0 +1,13 @@
+[package]
+name = "georgix"
+version = "0.1.0"
+authors = ["George Claghorn <george@hey.com>"]
+edition = "2018"
+
+[dependencies]
+spin = "0.5.2"
+uart_16550 = "0.2.0"
+
+[dependencies.lazy_static]
+version = "1.0"
+features = ["spin_no_std"]
