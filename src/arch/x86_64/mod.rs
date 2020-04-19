@@ -1,7 +1,6 @@
 #![cfg(target_arch = "x86_64")]
 
-global_asm!(include_str!("boot/header.S"));
-global_asm!(include_str!("boot/start.S"));
+pub mod boot;
 
 pub fn park() -> ! {
     loop { halt(); }

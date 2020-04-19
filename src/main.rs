@@ -7,7 +7,6 @@
 #![reexport_test_harness_main = "test"]
 
 mod arch;
-mod boot;
 mod test;
 
 use arch::*;
@@ -37,5 +36,5 @@ macro_rules! println {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::boot::console::print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::arch::boot::console::print(format_args!($($arg)*)));
 }
