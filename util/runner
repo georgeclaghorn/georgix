@@ -20,4 +20,18 @@ else
 fi
 
 # Run it in QEMU.
-$qemu -cdrom target/georgix.iso -serial stdio -display none
+#
+# If running tests, provide a debug exit device and translate exit code 33 to 0.
+if [ "$(basename "$(dirname "$executable")")" = "deps" ]; then
+  $qemu -cdrom target/georgix.iso -serial stdio -device isa-debug-exit,iobase=0xf4,iosize=0x4 -display none
+
+  status=$?
+
+  if [ $status -eq 33 ]; then
+    exit 0
+  else
+    exit $status
+  fi
+else
+  exec $qemu -cdrom target/georgix.iso -serial stdio -display none
+fi

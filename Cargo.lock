@@ -19,6 +19,7 @@ dependencies = [
  "lazy_static",
  "spin",
  "uart_16550",
+ "x86_64",
 ]
 
 [[package]]
