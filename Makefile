@@ -1,7 +1,7 @@
-export ARCH=x86_64
+export ARCH?=x86_64
 export RUSTFLAGS=-C link-arg=-Tsrc/arch/$(ARCH)/linker.ld
 
-TARGET=$(ARCH)-unknown-georgix-gnu.json
+TARGET?=$(ARCH)-unknown-georgix-gnu.json
 
 default: run
 
