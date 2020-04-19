@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+executable=$1
+arch=${ARCH:-x86_64}
+qemu=${QEMU:-qemu-system-$arch}
+
+# Make a GRUB ISO.
+if $(type grub-mkrescue >/dev/null 2>&1); then
+  (
+    rm -rf target/iso
+    mkdir -p target/iso/boot/grub
+    cp grub.cfg target/iso/boot/grub/
+    cp "$executable" target/iso/georgix
+    grub-mkrescue -o target/georgix.iso target/iso/
+  ) >/dev/null 2>&1
+else
+  echo "grub-mkrescue -o target/georgix.iso target/iso/" >&2
+  echo "grub-mkrescue: command not found" >&2
+  exit 1
+fi
+
+# Run it in QEMU.
+$qemu -cdrom target/georgix.iso -serial stdio -display none
