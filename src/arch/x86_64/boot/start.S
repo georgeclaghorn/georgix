@@ -72,9 +72,7 @@ start:
     movw %ax, %es
 
     # Far-jump to the Rust kernel entrypoint, entering 64-bit mode in the process.
-    pushw $(global_descriptor_table.code)
-    pushl $(main)
-    lret
+    ljmp $(global_descriptor_table.code), $(main)
 
     # The kernel shouldn't return, but if it does for some reason, park.
 1:  hlt
