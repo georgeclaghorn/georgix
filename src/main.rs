@@ -12,7 +12,7 @@ mod test;
 use arch::*;
 
 #[no_mangle]
-fn main() -> ! {
+pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
     println!("Hello, {}!", "world");
 
     #[cfg(test)]

@@ -5,8 +5,17 @@
 .code32
 
 start:
-    # The bootloader jumps here after putting the CPU in 32-bit protected mode. We want to switch
-    # into 64-bit long mode before jumping into Rust. This requires that we activate paging.
+    # The bootloader provides:
+    #
+    # * A magic number in EAX
+    # * The physical address of the boot information record in EBX
+    #
+    # We clobber EAX and EBX, so save these values in EDI and ESI to pass to the Rust entrypoint later.
+    movl %eax, %edi
+    movl %ebx, %esi
+
+    # The bootloader leaves the CPU in 32-bit protected mode. We want to switch into 64-bit long
+    # mode before jumping into Rust. This requires that we activate paging.
     #
     # Setting up 32-bit page tables is the first step. For now, we'll identity-map virtual memory
     # to physical memory. The kernel will load different page tables later for true virtualization.
@@ -72,6 +81,9 @@ start:
     movw %ax, %es
 
     # Far-jump to the Rust kernel entrypoint, entering 64-bit mode in the process.
+    #
+    # Pass the bootloader magic number and the address of the boot information record. We moved
+    # them into the EDI and ESI argument registers earlier.
     ljmp $(global_descriptor_table.code), $(main)
 
     # The kernel shouldn't return, but if it does for some reason, park.
