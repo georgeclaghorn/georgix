@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![feature(asm, global_asm)]
+#![feature(llvm_asm, global_asm)]
 
 #![feature(custom_test_frameworks)]
 #![test_runner(crate::test::run)]

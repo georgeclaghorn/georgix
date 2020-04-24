@@ -8,5 +8,5 @@ pub fn park() -> ! {
 }
 
 pub fn halt() {
-    unsafe { asm!("hlt"); }
+    unsafe { llvm_asm!("hlt"); }
 }
