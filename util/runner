@@ -11,7 +11,12 @@ if $(type grub-mkrescue >/dev/null 2>&1); then
     mkdir -p target/iso/boot/grub
     cp grub.cfg target/iso/boot/grub/
     cp "$executable" target/iso/georgix
-    grub-mkrescue -o target/georgix.iso target/iso/
+
+    if [ -d /usr/lib/grub/i386-pc ]; then
+      grub-mkrescue -d /usr/lib/grub/i386-pc -o target/georgix.iso target/iso/
+    else
+      grub-mkrescue -o target/georgix.iso target/iso/
+    fi
   ) >/dev/null 2>&1
 else
   echo "grub-mkrescue -o target/georgix.iso target/iso/" >&2
