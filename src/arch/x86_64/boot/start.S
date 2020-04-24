@@ -82,6 +82,11 @@ start:
 
     # Far-jump to the Rust kernel entrypoint, entering 64-bit mode in the process.
     #
+    # A far jump is a jump across code segments. In this case, we're switching from the default
+    # code segment the bootloader provided to our own, defined in the GDT below. Our code segment's
+    # descriptor has its L bit set to indicate it contains 64-bit code, so jumping into it has the
+    # effect of entering 64-bit mode.
+    #
     # Pass the bootloader magic number and the address of the boot information record. We moved
     # them into the EDI and ESI argument registers earlier.
     ljmp $(global_descriptor_table.code), $(main)
