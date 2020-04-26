@@ -38,28 +38,21 @@ impl core::fmt::Write for Writer {
 
 #[cfg(test)]
 mod tests {
-    use crate::{print, println};
-    use super::{print as print_graphically, CONSOLE};
+    use super::*;
 
-    #[test_case]
+    #[test]
     fn printing_one_line() {
-        print!("vga::text::console::tests::printing_one_line... ");
-
-        print_graphically(format_args!("Some test string that fits on a single line"));
+        print(format_args!("Some test string that fits on a single line"));
 
         for (i, character) in "Some test string that fits on a single line".chars().enumerate() {
             let buffered_character = CONSOLE.lock().buffer.characters[0][i].read();
             assert_eq!(char::from(buffered_character.codepoint), character);
         }
-
-        println!("[ok]");
     }
 
-    #[test_case]
+    #[test]
     fn printing_two_lines() {
-        print!("vga::text::console::tests::printing_two_lines... ");
-
-        print_graphically(format_args!("Some test string\nover two lines"));
+        print(format_args!("Some test string\nover two lines"));
 
         for (i, character) in "Some test string".chars().enumerate() {
             let buffered_character = CONSOLE.lock().buffer.characters[0][i].read();
@@ -70,7 +63,5 @@ mod tests {
             let buffered_character = CONSOLE.lock().buffer.characters[1][i].read();
             assert_eq!(char::from(buffered_character.codepoint), character);
         }
-
-        println!("[ok]");
     }
 }

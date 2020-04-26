@@ -2,8 +2,6 @@
 #![no_main]
 #![feature(llvm_asm, global_asm)]
 
-#![feature(custom_test_frameworks)]
-#![test_runner(crate::test::run)]
 #![reexport_test_harness_main = "test"]
 
 mod arch;

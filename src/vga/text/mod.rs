@@ -111,18 +111,13 @@ impl Character {
 
 #[cfg(test)]
 mod tests {
-    use crate::{print, println};
     use super::*;
 
-    #[test_case]
+    #[test]
     fn constructing_a_character_with_an_invalid_codepoint() {
-        print!("vga::text::tests::constructing_a_character_with_an_invalid_codepoint... ");
-
         assert_eq!(
             Character::new(195, ColorCode::new(Color::LightGray, Color::Black)),
             Character { codepoint: 0xfe, color: ColorCode::new(Color::LightGray, Color::Black) }
         );
-
-        println!("[ok]");
     }
 }

@@ -32,30 +32,21 @@ pub enum Color {
 
 #[cfg(test)]
 mod tests {
-    use crate::{print, println};
     use super::*;
 
-    #[test_case]
+    #[test]
     fn constructing_a_light_gray_on_black_color_code() {
-        print!("vga::text::colors::tests::constructing_a_light_gray_on_black_color_code... ");
-
         assert_eq!(
             ColorCode::new(Color::LightGray, Color::Black),
             ColorCode(7)
         );
-
-        println!("[ok]");
     }
 
-    #[test_case]
+    #[test]
     fn constructing_a_white_on_green_color_code() {
-        print!("vga::text::color::tests::constructing_a_white_on_green_color_code... ");
-
         assert_eq!(
             ColorCode::new(Color::White, Color::Green),
             ColorCode(47)
         );
-
-        println!("[ok]");
     }
 }

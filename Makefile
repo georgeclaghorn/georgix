@@ -14,4 +14,4 @@ test:
 clean:
 	cargo clean
 
-.PHONY: default run clean
+.PHONY: default run test clean
