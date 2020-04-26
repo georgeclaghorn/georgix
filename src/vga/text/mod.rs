@@ -78,6 +78,9 @@ impl Console {
                 self.buffer.characters[row][column].write(Character::blank());
             }
         }
+
+        self.row = 0;
+        self.column = 0;
     }
 }
 
@@ -106,6 +109,18 @@ impl Character {
             codepoint: 0,
             color: ColorCode::new(Color::Black, Color::Black)
         }
+    }
+}
+
+impl PartialEq<char> for Character {
+    fn eq(&self, other: &char) -> bool {
+        char::from(self.codepoint) == *other
+    }
+}
+
+impl PartialEq<Character> for char {
+    fn eq(&self, other: &Character) -> bool {
+        other == self
     }
 }
 
