@@ -1,0 +1,42 @@
+name: CI
+on: push
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rust-src
+          override: true
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y grub-pc qemu qemu-system
+
+      - name: Install cargo-xbuild
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-xbuild
+
+      - name: Cache Cargo
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-v2
+
+      - name: Cache build targets
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-target-${{ hashFiles('**/Cargo.lock') }}-v2
+
+      - name: Run tests
+        run: make test
