@@ -7,18 +7,27 @@
 #![reexport_test_harness_main = "test"]
 
 mod arch;
+mod boot;
+mod vga;
 mod test;
 
 use arch::*;
 
 #[no_mangle]
 pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
+    initialize();
+
     println!("Hello, {}!", "world");
+    println!("Yeah, what's up, world?");
 
     #[cfg(test)]
     test();
 
     park();
+}
+
+fn initialize() {
+    boot::console::initialize();
 }
 
 #[cfg(not(test))]
@@ -36,5 +45,5 @@ macro_rules! println {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::arch::boot::console::print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::boot::console::print(format_args!($($arg)*)));
 }

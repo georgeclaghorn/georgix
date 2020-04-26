@@ -26,7 +26,9 @@ fi
 
 # Run it in QEMU.
 #
-# If running tests, provide a debug exit device and translate exit code 33 to 0.
+# If running tests:
+# * Let tests write to standard output over the serial bus. Disable the display.
+# * Provide a debug exit device. Translate exit code 33 to 0.
 if [ "$(basename "$(dirname "$executable")")" = "deps" ]; then
   $qemu -cdrom target/georgix.iso -serial stdio -device isa-debug-exit,iobase=0xf4,iosize=0x4 -display none
 
@@ -38,5 +40,5 @@ if [ "$(basename "$(dirname "$executable")")" = "deps" ]; then
     exit $status
   fi
 else
-  exec $qemu -cdrom target/georgix.iso -serial stdio -display none
+  exec $qemu -cdrom target/georgix.iso -serial stdio
 fi
