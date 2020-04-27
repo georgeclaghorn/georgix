@@ -2,6 +2,7 @@
 
 pub mod boot;
 pub mod test;
+pub mod vga;
 
 pub fn park() -> ! {
     loop { halt(); }

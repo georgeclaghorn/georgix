@@ -4,6 +4,7 @@ pub mod console;
 pub(self) use colors::{ColorCode, Color};
 
 use volatile::Volatile;
+use crate::arch::vga::registers::crtc::CURSOR_START_REGISTER;
 
 const BUFFER_HEIGHT: usize = 25;
 const BUFFER_WIDTH: usize = 80;
@@ -78,6 +79,8 @@ impl Console {
                 self.buffer.characters[row][column].write(Character::blank());
             }
         }
+
+        CURSOR_START_REGISTER.lock().set(5);
 
         self.row = 0;
         self.column = 0;

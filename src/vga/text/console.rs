@@ -39,6 +39,7 @@ impl core::fmt::Write for Writer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::arch::vga::registers::crtc::CURSOR_START_REGISTER;
 
     #[test]
     fn printing_one_line() {
@@ -116,6 +117,12 @@ mod tests {
         for i in 0..80 {
             assert_eq!(Character::blank(), character_at(24, i));
         }
+    }
+
+    #[test]
+    fn disabling_the_cursor_on_initialize() {
+        initialize();
+        assert!(CURSOR_START_REGISTER.lock().get(5));
     }
 
     fn character_at(row: usize, column: usize) -> Character {
