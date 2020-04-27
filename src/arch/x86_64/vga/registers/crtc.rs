@@ -1,6 +1,8 @@
 use lazy_static::*;
-use x86_64::instructions::port::Port;
 use spin::Mutex;
+use x86_64::instructions::port::Port;
+
+use super::external::MISCELLANEOUS_OUTPUT_REGISTER;
 
 lazy_static! {
     pub static ref CURSOR_START_REGISTER: Mutex<Register> = Mutex::new(unsafe { Register::new(0x0a) });
@@ -8,13 +10,12 @@ lazy_static! {
     static ref ADDRESS_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 4));
     static ref DATA_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 5));
 
-    static ref BASE: u16 = {
-        if super::MISCELLANEOUS_OUTPUT_REGISTER.lock().get(0) {
+    static ref BASE: u16 =
+        if MISCELLANEOUS_OUTPUT_REGISTER.lock().get(0) {
             0x03d0
         } else {
             0x03b0
-        }
-    };
+        };
 }
 
 pub struct Register {
@@ -40,6 +41,7 @@ impl Register {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get(&self, index: u8) -> bool {
         self.read() & (1 << index) != 0
     }
