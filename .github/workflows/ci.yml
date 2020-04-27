@@ -18,7 +18,7 @@ jobs:
           override: true
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y grub-pc qemu qemu-system
+        run: sudo apt-get update && sudo apt-get install -y grub-pc qemu qemu-system-x86
 
       - name: Cache Cargo
         uses: actions/cache@v1
