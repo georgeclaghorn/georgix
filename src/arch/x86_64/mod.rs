@@ -9,5 +9,5 @@ pub fn park() -> ! {
 }
 
 pub fn halt() {
-    unsafe { llvm_asm!("hlt"); }
+    unsafe { llvm_asm!("hlt" :::: "volatile"); }
 }
