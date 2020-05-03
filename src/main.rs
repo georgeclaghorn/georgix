@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(llvm_asm, global_asm)]
+#![feature(abi_x86_interrupt)]
 
 #![reexport_test_harness_main = "test"]
 
@@ -26,6 +27,7 @@ pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
 
 fn initialize() {
     boot::console::initialize();
+    arch::initialize();
 }
 
 #[cfg(not(test))]
