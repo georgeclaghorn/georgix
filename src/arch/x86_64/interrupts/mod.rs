@@ -14,6 +14,8 @@ lazy_static! {
                 .set_stack_index(super::segmentation::DOUBLE_FAULT_STACK_INDEX);
         }
 
+        table.general_protection_fault.set_handler_fn(self::handlers::general_protection_fault);
+
         table
     };
 }
