@@ -13,10 +13,12 @@ pub fn initialize() {
     interrupts::initialize();
 }
 
+#[inline(always)]
 pub fn park() -> ! {
     loop { halt(); }
 }
 
+#[inline(always)]
 pub fn halt() {
     unsafe { llvm_asm!("hlt" :::: "volatile"); }
 }
