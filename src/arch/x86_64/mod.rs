@@ -2,10 +2,10 @@
 
 pub mod boot;
 pub mod vga;
+pub mod interrupts;
 
 pub mod test;
 
-mod interrupts;
 mod segmentation;
 
 pub fn initialize() {

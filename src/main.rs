@@ -22,7 +22,12 @@ pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
     #[cfg(test)]
     test();
 
-    park();
+    loop {
+        for i in 0..=9 {
+            for _ in 0..10000 { }
+            print!("{}", i);
+        }
+    }
 }
 
 fn initialize() {

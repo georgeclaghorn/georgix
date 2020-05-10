@@ -21,7 +21,7 @@ pub fn initialize() {
 }
 
 pub fn print(args: core::fmt::Arguments) {
-    WRITER.lock().write_fmt(args).unwrap();
+    crate::arch::interrupts::without(|| WRITER.lock().write_fmt(args).unwrap());
 }
 
 struct Writer {

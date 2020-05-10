@@ -42,6 +42,15 @@ pub fn initialize() {
 
     unsafe {
         set_cs(GLOBAL_DESCRIPTOR_TABLE.1.code_selector);
+        clear_ss();
         load_tss(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector);
     }
+}
+
+unsafe fn clear_ss() {
+    set_ss(0);
+}
+
+unsafe fn set_ss(value: u16) {
+    llvm_asm!("movw $0, %ss" :: "r{bx}"(value));
 }
