@@ -39,4 +39,4 @@ jobs:
           args: cargo-xbuild
 
       - name: Run tests
-        run: make test
+        run: cargo xtest

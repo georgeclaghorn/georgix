@@ -1,2 +1,6 @@
-[target.'cfg(target_os = "georgix")']
-runner = ["util/runner"]
+[build]
+target = "targets/x86_64-unknown-georgix-gnu.json"
+
+[target."x86_64-unknown-georgix-gnu"]
+rustflags = ["-C", "link-arg=-Tsrc/arch/x86_64/linker.ld"]
+runner = "util/run"
