@@ -49,14 +49,13 @@ impl Console {
         if self.row == BUFFER_HEIGHT - 1 {
             for row in 1..BUFFER_HEIGHT {
                 for column in 0..BUFFER_WIDTH {
-                    self.buffer.characters[row - 1][column].write(
-                        self.buffer.characters[row][column].read()
-                    );
+                    let character = self.at(row, column).read();
+                    self.at(row - 1, column).write(character);
                 }
             }
 
             for column in 0..BUFFER_WIDTH {
-                self.buffer.characters[self.row][column].write(Character::blank());
+                self.at(self.row, column).write(Character::blank());
             }
         } else {
             self.row += 1;
@@ -66,7 +65,15 @@ impl Console {
     }
 
     fn put(&mut self, character: Character) {
-        self.buffer.characters[self.row][self.column].write(character);
+        self.current().write(character);
+    }
+
+    fn current(&mut self) -> &mut Volatile<Character> {
+        self.at(self.row, self.column)
+    }
+
+    fn at(&mut self, row: usize, column: usize) -> &mut Volatile<Character> {
+        &mut self.buffer.characters[row][column]
     }
 
     fn advance(&mut self) {
@@ -76,7 +83,7 @@ impl Console {
     fn clear(&mut self) {
         for row in 0..BUFFER_HEIGHT {
             for column in 0..BUFFER_WIDTH {
-                self.buffer.characters[row][column].write(Character::blank());
+                self.at(row, column).write(Character::blank());
             }
         }
 
