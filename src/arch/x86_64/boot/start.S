@@ -27,14 +27,14 @@ start:
     # always a multiple of 4096, which in turn means that the lower 12 bits are always zero. Since
     # the lower 12 bits are always zero, they can be used to store metadata in page table entries.
     # We set metadata bits indicating the level 2 page table is present (0b1) and writable (0b10).
-    movl $(page_table + 0x1000), %eax
+    movl $(boot.page_table + 0x1000), %eax
     orl $0b11, %eax
-    movl %eax, (page_table)
+    movl %eax, (boot.page_table)
 
     # Add one entry to the level 2 page table pointing to the level 1 page table.
-    movl $(page_table + 0x2000), %eax
+    movl $(boot.page_table + 0x2000), %eax
     orl $0b11, %eax
-    movl %eax, (page_table + 0x1000)
+    movl %eax, (boot.page_table + 0x1000)
 
     # Populate the level 1 page table with 512 entries, each pointing to a contiguous 2 MB block
     # of physical memory. We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate
@@ -43,13 +43,13 @@ start:
 1:  movl 0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
-    mov %eax, page_table + 0x2000(,%ecx,8)
+    mov %eax, boot.page_table + 0x2000(,%ecx,8)
     inc %ecx
     cmpl $512, %ecx
     jne 1b
 
     # Load the page table.
-    movl page_table, %eax
+    movl boot.page_table, %eax
     movl %eax, %cr3
 
     # Enable physical address extension (PAE).
@@ -72,10 +72,10 @@ start:
     movl %eax, %cr0
 
     # Load a 64-bit global descriptor table.
-    lgdt (global_descriptor_table.pointer)
+    lgdt (boot.global_descriptor_table.pointer)
 
     # Populate the segment registers (except CS).
-    movw $(global_descriptor_table.data), %ax
+    movw $(boot.global_descriptor_table.data), %ax
     movw %ax, %ss
     movw %ax, %ds
     movw %ax, %es
@@ -89,7 +89,7 @@ start:
     #
     # Pass the bootloader magic number and the address of the boot information record. We moved
     # them into the EDI and ESI argument registers earlier.
-    ljmp $(global_descriptor_table.code), $(main)
+    ljmp $(boot.global_descriptor_table.code), $(main)
 
     # The kernel shouldn't return, but if it does for some reason, park.
 1:  hlt
@@ -102,7 +102,7 @@ start:
 .bss
 .align 4096
 
-page_table:
+boot.page_table:
     # Reserve space for three levels of page tables.
     #
     # Each level must be aligned on a 4-kilobyte boundary. The .align assembler directive above
@@ -113,15 +113,15 @@ page_table:
 
 .section .rodata
 
-global_descriptor_table:
+boot.global_descriptor_table:
     .quad 0
 
-.equ global_descriptor_table.code, . - global_descriptor_table
+.equ boot.global_descriptor_table.code, . - boot.global_descriptor_table
     .quad (1 << 53) | (1 << 47) | (1 << 44) | (1 << 43) | (1 << 41)
 
-.equ global_descriptor_table.data, . - global_descriptor_table
+.equ boot.global_descriptor_table.data, . - boot.global_descriptor_table
     .quad (1 << 47) | (1 << 44) | (1 << 41)
 
-global_descriptor_table.pointer:
-    .word . - global_descriptor_table - 1
-    .quad global_descriptor_table
+boot.global_descriptor_table.pointer:
+    .word . - boot.global_descriptor_table - 1
+    .quad boot.global_descriptor_table
