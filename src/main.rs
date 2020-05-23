@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![feature(llvm_asm, global_asm)]
+#![feature(asm, global_asm)]
 #![feature(abi_x86_interrupt)]
 
 #![reexport_test_harness_main = "test"]

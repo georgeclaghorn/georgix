@@ -20,5 +20,5 @@ pub fn park() -> ! {
 
 #[inline(always)]
 pub fn halt() {
-    unsafe { llvm_asm!("hlt" :::: "volatile"); }
+    unsafe { asm!("hlt", options(nomem, nostack)); }
 }

@@ -52,5 +52,5 @@ unsafe fn clear_ss() {
 }
 
 unsafe fn set_ss(value: u16) {
-    llvm_asm!("movw $0, %ss" :: "r{bx}"(value));
+    asm!("mov ss, {:x}", in(reg) value);
 }
