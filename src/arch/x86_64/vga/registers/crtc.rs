@@ -5,7 +5,8 @@ use x86_64::instructions::port::Port;
 use super::external::MISCELLANEOUS_OUTPUT_REGISTER;
 
 lazy_static! {
-    pub static ref CURSOR_START_REGISTER: Mutex<Register> = Mutex::new(unsafe { Register::new(0x0a) });
+    pub static ref CURSOR_START_REGISTER: Mutex<Register> =
+        Mutex::new(unsafe { Register::new(&ADDRESS_PORT, &DATA_PORT, 0x0a) });
 
     static ref ADDRESS_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 4));
     static ref DATA_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 5));
@@ -19,25 +20,31 @@ lazy_static! {
 }
 
 pub struct Register {
+    address_port: &'static Mutex<Port<u8>>,
+    data_port: &'static Mutex<Port<u8>>,
     index: u8
 }
 
 impl Register {
-    pub unsafe fn new(index: u8) -> Register {
-        Register { index }
+    pub unsafe fn new(address_port: &'static Mutex<Port<u8>>, data_port: &'static Mutex<Port<u8>>, index: u8) -> Register {
+        Register {
+            address_port,
+            data_port,
+            index
+        }
     }
 
     pub fn read(&self) -> u8 {
         unsafe {
-            ADDRESS_PORT.lock().write(self.index);
-            DATA_PORT.lock().read()
+            self.address_port.lock().write(self.index);
+            self.data_port.lock().read()
         }
     }
 
     pub fn write(&self, value: u8) {
         unsafe {
-            ADDRESS_PORT.lock().write(self.index);
-            DATA_PORT.lock().write(value)
+            self.address_port.lock().write(self.index);
+            self.data_port.lock().write(value)
         }
     }
 
