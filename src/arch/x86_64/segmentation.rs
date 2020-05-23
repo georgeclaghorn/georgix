@@ -54,3 +54,13 @@ unsafe fn clear_ss() {
 unsafe fn set_ss(value: u16) {
     asm!("mov ss, {:x}", in(reg) value);
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn clearing_ss() {
+        let ss;
+        unsafe { asm!("mov {:x}, ss", out(reg) ss); }
+        assert_eq!(0, ss);
+    }
+}
