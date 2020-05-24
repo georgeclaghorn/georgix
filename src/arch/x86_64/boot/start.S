@@ -20,36 +20,37 @@ start:
     # Setting up 32-bit page tables is the first step. For now, we'll identity-map virtual memory
     # to physical memory. The kernel will load different page tables later for true virtualization.
 
-    # Add one entry to the level 3 page table pointing to the level 2 page table.
+    # Add one entry to the Page Directory Pointer Table pointing to the Page Directory Table.
     #
-    # Notice that we add 3 (0b11) to the level 2 page table's address. Addresses in page table
-    # entries are required to be aligned to 4-kilobyte boundaries. This means that the address is
-    # always a multiple of 4096, which in turn means that the lower 12 bits are always zero. Since
-    # the lower 12 bits are always zero, they can be used to store metadata in page table entries.
-    # We set metadata bits indicating the level 2 page table is present (0b1) and writable (0b10).
-    movl $(boot.page_table + 0x1000), %eax
+    # Notice that we add 3 (0b11) to the PDT address. Addresses in page table entries are required
+    # to be aligned to 4-kilobyte boundaries. This means that the address is always a multiple of
+    # 4096, which in turn means that the lower 12 bits are always zero. Since the lower 12 bits are
+    # always zero, they can be used to store metadata in page table entries. We set metadata bits
+    # indicating the PDT is present (0b1) and writable (0b10).
+    movl $boot.page_directory_table, %eax
     orl $0b11, %eax
-    movl %eax, (boot.page_table)
+    movl %eax, (boot.page_directory_pointer_table)
 
-    # Add one entry to the level 2 page table pointing to the level 1 page table.
-    movl $(boot.page_table + 0x2000), %eax
+    # Add one entry to the PDT pointing to the Page Table.
+    movl $boot.page_table, %eax
     orl $0b11, %eax
-    movl %eax, (boot.page_table + 0x1000)
+    movl %eax, (boot.page_directory_table)
 
-    # Populate the level 1 page table with 512 entries, each pointing to a contiguous 2 MB block
-    # of physical memory. We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate
-    # that these page table entries are leaves and that the page frames they address are each 2 MB.
+    # Populate the Page Table with 512 entries, each pointing to a 2 MB physical page frame.
+    #
+    # We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate that the PTEs are
+    # leaves and that the frames they point to are each 2 MB.
     movl $0, %ecx
 1:  movl 0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
-    mov %eax, boot.page_table + 0x2000(,%ecx,8)
+    mov %eax, boot.page_table(,%ecx,8)
     inc %ecx
     cmpl $512, %ecx
     jne 1b
 
-    # Load the page table.
-    movl boot.page_table, %eax
+    # Load the PDPT.
+    movl boot.page_directory_pointer_table, %eax
     movl %eax, %cr3
 
     # Enable physical address extension (PAE).
@@ -102,13 +103,14 @@ start:
 .bss
 .align 4096
 
+boot.page_directory_pointer_table:
+    .skip 4096
+
+boot.page_directory_table:
+    .skip 4096
+
 boot.page_table:
-    # Reserve space for three levels of page tables.
-    #
-    # Each level must be aligned on a 4-kilobyte boundary. The .align assembler directive above
-    # ensures that the top level, the third, is properly aligned. A level has at most 512 entries,
-    # each 8 bytes long, and so uses a maximum of 4 kilobytes. How convenient is that?
-    .skip 4096 * 3
+    .skip 4096
 
 
 .section .rodata
