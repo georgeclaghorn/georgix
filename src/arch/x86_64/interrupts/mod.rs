@@ -18,6 +18,7 @@ lazy_static! {
         }
 
         table.general_protection_fault.set_handler_fn(self::handlers::general_protection_fault);
+        table.page_fault.set_handler_fn(self::handlers::page_fault);
 
         table[Index::Timer.as_usize()].set_handler_fn(self::handlers::timer);
 
