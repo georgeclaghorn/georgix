@@ -44,7 +44,7 @@ start:
 1:  movl 0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
-    mov %eax, boot.page_directory_table(,%ecx,8)
+    movl %eax, boot.page_directory_table(,%ecx,8)
     inc %ecx
     cmpl $512, %ecx
     jne 1b
