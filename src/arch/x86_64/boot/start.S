@@ -36,7 +36,7 @@ start:
     orl $0b11, %eax
     movl %eax, (boot.page_directory_pointer_table)
 
-    # Populate the Page Directory Table with 512 entries, each pointing to a 2 MB physical page frame.
+    # Populate the PDT with 512 entries, each pointing to a 2 MB physical page frame.
     #
     # We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate that the PDTEs are
     # leaves and that the frames they point to are each 2 MB.
@@ -48,6 +48,19 @@ start:
     inc %ecx
     cmpl $512, %ecx
     jne 1b
+
+    # Next we'll identity-map the LAPIC register file. It's in the 4 KB of physical memory starting
+    # at 0xFEE00000, near the top of the 32-bit address space.
+
+    # Populate the fourth PDPE. Point it at a second PDT.
+    movl $(boot.page_directory_table + 0x1000), %eax
+    orl $0b11, %eax
+    movl %eax, (boot.page_directory_pointer_table + 24)
+
+    # Populate the 504th entry of the second PDT. Point to the 2 MB frame at 0xFEE00000.
+    movl $0xFEE00000, %eax
+    orl $0b10000011, %eax
+    movl %eax, (boot.page_directory_table + 0x1FB8)
 
     # Load the PML4 Table.
     movl $boot.page_map_level_4_table, %eax
@@ -110,7 +123,7 @@ boot.page_directory_pointer_table:
     .skip 4096
 
 boot.page_directory_table:
-    .skip 4096
+    .skip 2 * 4096
 
 
 .section .rodata
