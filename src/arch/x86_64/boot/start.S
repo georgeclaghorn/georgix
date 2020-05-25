@@ -50,7 +50,7 @@ start:
     jne 1b
 
     # Load the PML4 Table.
-    movl boot.page_map_level_4_table, %eax
+    movl $boot.page_map_level_4_table, %eax
     movl %eax, %cr3
 
     # Enable physical address extension (PAE).
