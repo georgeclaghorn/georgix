@@ -6,11 +6,14 @@ pub mod interrupts;
 
 pub mod test;
 
+mod instructions;
 mod segmentation;
+mod util;
 
 pub fn initialize() {
     segmentation::initialize();
     interrupts::initialize();
+    interrupts::enable();
 }
 
 #[inline(always)]
@@ -20,5 +23,5 @@ pub fn park() -> ! {
 
 #[inline(always)]
 pub fn halt() {
-    unsafe { asm!("hlt", options(nomem, nostack)); }
+    unsafe { self::instructions::hlt(); }
 }

@@ -6,6 +6,8 @@ use x86_64::structures::idt::InterruptDescriptorTable;
 use pic8259_simple::ChainedPics;
 use spin::Mutex;
 
+use super::util::rflags;
+
 lazy_static! {
     static ref INTERRUPT_DESCRIPTOR_TABLE: InterruptDescriptorTable = {
         let mut table = InterruptDescriptorTable::new();
@@ -37,15 +39,34 @@ pub(super) fn initialize() {
     unsafe {
         PICS.lock().initialize();
     }
-
-    x86_64::instructions::interrupts::enable();
 }
 
-pub fn without<F, R>(f: F) -> R
-where
-    F: FnOnce() -> R
-{
-    x86_64::instructions::interrupts::without_interrupts(f)
+pub(super) fn enable() {
+    unsafe { super::instructions::sti(); }
+}
+
+pub(super) fn disable() {
+    unsafe { super::instructions::cli(); }
+}
+
+pub(super) fn enabled() -> bool {
+    (rflags() & 0x200) != 0
+}
+
+pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
+    let enabled = enabled();
+
+    if enabled {
+        disable();
+    }
+
+    let result = f();
+
+    if enabled {
+        enable();
+    }
+
+    result
 }
 
 fn end(index: Index) {

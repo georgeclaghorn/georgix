@@ -15,7 +15,7 @@ pub mod console {
     }
 
     pub fn print(args: core::fmt::Arguments) {
-        crate::arch::x86_64::interrupts::without(|| COM1.lock().write_fmt(args).unwrap());
+        crate::arch::x86_64::interrupts::suppress(|| COM1.lock().write_fmt(args).unwrap());
     }
 }
 
