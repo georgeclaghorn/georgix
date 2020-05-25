@@ -17,40 +17,40 @@ start:
     # The bootloader leaves the CPU in 32-bit protected mode. We want to switch into 64-bit long
     # mode before jumping into Rust. This requires that we activate paging.
     #
-    # Setting up 32-bit page tables is the first step. For now, we'll identity-map virtual memory
-    # to physical memory. The kernel will load different page tables later for true virtualization.
+    # Setting up page tables is the first step. For now, we'll identity-map virtual memory to
+    # physical memory. The kernel will load different page tables later for true virtualization.
 
-    # Add one entry to the Page Directory Pointer Table pointing to the Page Directory Table.
+    # Add one entry to the Page Map Level 4 Table pointing to the Page Directory Pointer Table.
     #
-    # Notice that we add 3 (0b11) to the PDT address. Addresses in page table entries are required
+    # Notice that we add 3 (0b11) to the PDPT address. Addresses in page table entries are required
     # to be aligned to 4-kilobyte boundaries. This means that the address is always a multiple of
     # 4096, which in turn means that the lower 12 bits are always zero. Since the lower 12 bits are
     # always zero, they can be used to store metadata in page table entries. We set metadata bits
-    # indicating the PDT is present (0b1) and writable (0b10).
+    # indicating the PDPT is present (0b1) and writable (0b10).
+    movl $boot.page_directory_pointer_table, %eax
+    orl $0b11, %eax
+    movl %eax, (boot.page_map_level_4_table)
+
+    # Add one entry to the PDPT pointing to the Page Directory Table.
     movl $boot.page_directory_table, %eax
     orl $0b11, %eax
     movl %eax, (boot.page_directory_pointer_table)
 
-    # Add one entry to the PDT pointing to the Page Table.
-    movl $boot.page_table, %eax
-    orl $0b11, %eax
-    movl %eax, (boot.page_directory_table)
-
-    # Populate the Page Table with 512 entries, each pointing to a 2 MB physical page frame.
+    # Populate the Page Directory Table with 512 entries, each pointing to a 2 MB physical page frame.
     #
-    # We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate that the PTEs are
+    # We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate that the PDTEs are
     # leaves and that the frames they point to are each 2 MB.
     movl $0, %ecx
 1:  movl 0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
-    mov %eax, boot.page_table(,%ecx,8)
+    mov %eax, boot.page_directory_table(,%ecx,8)
     inc %ecx
     cmpl $512, %ecx
     jne 1b
 
-    # Load the PDPT.
-    movl boot.page_directory_pointer_table, %eax
+    # Load the PML4 Table.
+    movl boot.page_map_level_4_table, %eax
     movl %eax, %cr3
 
     # Enable physical address extension (PAE).
@@ -103,13 +103,13 @@ start:
 .bss
 .align 4096
 
+boot.page_map_level_4_table:
+    .skip 4096
+
 boot.page_directory_pointer_table:
     .skip 4096
 
 boot.page_directory_table:
-    .skip 4096
-
-boot.page_table:
     .skip 4096
 
 
