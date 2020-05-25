@@ -29,12 +29,12 @@ start:
     # indicating the PDPT is present (0b1) and writable (0b10).
     movl $boot.page_directory_pointer_table, %eax
     orl $0b11, %eax
-    movl %eax, (boot.page_map_level_4_table)
+    movl %eax, boot.page_map_level_4_table
 
     # Add one entry to the PDPT pointing to the Page Directory Table.
     movl $boot.page_directory_table, %eax
     orl $0b11, %eax
-    movl %eax, (boot.page_directory_pointer_table)
+    movl %eax, boot.page_directory_pointer_table
 
     # Populate the PDT with 512 entries, each pointing to a 2 MB physical page frame.
     #
@@ -55,12 +55,12 @@ start:
     # Populate the fourth PDPE. Point it at a second PDT.
     movl $(boot.page_directory_table + 0x1000), %eax
     orl $0b11, %eax
-    movl %eax, (boot.page_directory_pointer_table + 24)
+    movl %eax, boot.page_directory_pointer_table + 24
 
     # Populate the 504th entry of the second PDT. Point to the 2 MB frame at 0xFEE00000.
     movl $0xFEE00000, %eax
     orl $0b10000011, %eax
-    movl %eax, (boot.page_directory_table + 0x1FB8)
+    movl %eax, boot.page_directory_table + 0x1FB8
 
     # Load the PML4 Table.
     movl $boot.page_map_level_4_table, %eax
@@ -86,7 +86,7 @@ start:
     movl %eax, %cr0
 
     # Load a 64-bit global descriptor table.
-    lgdt (boot.global_descriptor_table.pointer)
+    lgdt boot.global_descriptor_table.pointer
 
     # Populate the segment registers (except CS).
     movw $(boot.global_descriptor_table.data), %ax
