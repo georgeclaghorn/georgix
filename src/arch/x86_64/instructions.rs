@@ -1,6 +1,6 @@
 #[inline(always)]
-pub unsafe fn outb(port: u16, data: u8) {
-    asm!("out dx, al", in("dx") port, in("al") data, options(nomem));
+pub unsafe fn outb(port: u16, byte: u8) {
+    asm!("out dx, al", in("dx") port, in("al") byte, options(nomem));
 }
 
 #[inline(always)]
