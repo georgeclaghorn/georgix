@@ -7,6 +7,7 @@ pub mod interrupts;
 pub mod test;
 
 mod instructions;
+mod io;
 mod segmentation;
 mod util;
 

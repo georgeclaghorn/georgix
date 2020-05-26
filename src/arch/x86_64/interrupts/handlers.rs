@@ -1,6 +1,6 @@
 use x86_64::structures::idt::{InterruptStackFrame, PageFaultErrorCode};
 use crate::{println, print};
-use super::{Index, end};
+use super::complete;
 
 pub extern "x86-interrupt" fn breakpoint(stack_frame: &mut InterruptStackFrame) {
     println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
@@ -20,5 +20,5 @@ pub extern "x86-interrupt" fn page_fault(stack_frame: &mut InterruptStackFrame, 
 
 pub extern "x86-interrupt" fn timer(_stack_frame: &mut InterruptStackFrame) {
     print!(".");
-    end(Index::Timer);
+    complete();
 }

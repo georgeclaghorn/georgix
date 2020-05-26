@@ -1,9 +1,13 @@
-pub mod handlers;
+mod handlers;
+
+mod pic;
+use pic::{ChainedPIC, PIC};
+
+mod apic;
+use apic::APIC;
 
 use lazy_static::lazy_static;
 use x86_64::structures::idt::InterruptDescriptorTable;
-
-use pic8259_simple::ChainedPics;
 use spin::Mutex;
 
 use super::util::rflags;
@@ -22,23 +26,25 @@ lazy_static! {
         table.general_protection_fault.set_handler_fn(self::handlers::general_protection_fault);
         table.page_fault.set_handler_fn(self::handlers::page_fault);
 
-        table[Index::Timer.as_usize()].set_handler_fn(self::handlers::timer);
+        table[32].set_handler_fn(self::handlers::timer);
 
         table
     };
+
+    static ref PICS: Mutex<ChainedPIC> = Mutex::new(
+        ChainedPIC::new(
+            PIC::new(0x20, 0x21),
+            PIC::new(0xA0, 0xA1)
+        )
+    );
+
+    static ref LAPIC: Mutex<APIC> = Mutex::new(APIC::new(0xFEE00000));
 }
-
-pub const PIC_1_OFFSET: u8 = 32;
-pub const PIC_2_OFFSET: u8 = PIC_1_OFFSET + 8;
-
-pub static PICS: Mutex<ChainedPics> = Mutex::new(unsafe { ChainedPics::new(PIC_1_OFFSET, PIC_2_OFFSET) });
 
 pub(super) fn initialize() {
     INTERRUPT_DESCRIPTOR_TABLE.load();
-
-    unsafe {
-        PICS.lock().initialize();
-    }
+    PICS.lock().disable();
+    LAPIC.lock().initialize();
 }
 
 pub(super) fn enable() {
@@ -69,22 +75,6 @@ pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
     result
 }
 
-fn end(index: Index) {
-    unsafe { PICS.lock().notify_end_of_interrupt(index.as_u8()) }
-}
-
-#[derive(Debug, Clone, Copy)]
-#[repr(u8)]
-pub enum Index {
-    Timer = PIC_1_OFFSET
-}
-
-impl Index {
-    fn as_u8(self) -> u8 {
-        self as u8
-    }
-
-    fn as_usize(self) -> usize {
-        usize::from(self.as_u8())
-    }
+fn complete() {
+    LAPIC.lock().complete();
 }

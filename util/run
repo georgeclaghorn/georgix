@@ -40,5 +40,5 @@ if [ "$(basename "$(dirname "$executable")")" = "deps" ]; then
     exit $status
   fi
 else
-  exec $qemu -cdrom target/georgix.iso -serial stdio
+  exec $qemu -cdrom target/georgix.iso -monitor stdio
 fi
