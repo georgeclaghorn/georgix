@@ -1,3 +1,5 @@
+use super::Vector;
+
 pub struct APIC {
     task_priority_register: Register,
     end_of_interrupt_register: Register,
@@ -21,9 +23,9 @@ impl APIC {
 
     pub fn initialize(&self) {
         unsafe {
-            self.spurious_interrupt_vector_register.write(0x00000100 | (32 + 31));
+            self.spurious_interrupt_vector_register.write(0x00000100 | Vector::SpuriousInterrupt);
 
-            self.timer_vector_register.write(0x00020000 | (32 + 0));
+            self.timer_vector_register.write(0x00020000 | Vector::Timer);
             self.timer_initial_count_register.write(10000000);
             self.timer_divide_configuration_register.write(0xB);
 

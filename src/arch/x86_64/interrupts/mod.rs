@@ -26,7 +26,7 @@ lazy_static! {
         table.general_protection_fault.set_handler_fn(self::handlers::general_protection_fault);
         table.page_fault.set_handler_fn(self::handlers::page_fault);
 
-        table[32].set_handler_fn(self::handlers::timer);
+        table[Vector::Timer.into()].set_handler_fn(self::handlers::timer);
 
         table
     };
@@ -77,4 +77,24 @@ pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
 
 fn complete() {
     LAPIC.lock().complete();
+}
+
+#[repr(u8)]
+enum Vector {
+    Timer = 32,
+    SpuriousInterrupt = 63
+}
+
+impl Into<usize> for Vector {
+    fn into(self) -> usize {
+        self as usize
+    }
+}
+
+impl core::ops::BitOr<Vector> for u32 {
+    type Output = u32;
+
+    fn bitor(self, vector: Vector) -> u32 {
+        self | vector as u32
+    }
 }
