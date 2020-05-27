@@ -14,7 +14,7 @@ impl APIC {
             end_of_interrupt_register: Register::new(base + 0x00B0),
             spurious_interrupt_vector_register: Register::new(base + 0x00F0),
             timer_vector_register: Register::new(base + 0x0320),
-            timer_initial_count_register: Register::new(base + 0x380),
+            timer_initial_count_register: Register::new(base + 0x0380),
             timer_divide_configuration_register: Register::new(base + 0x03E0)
         }
     }
