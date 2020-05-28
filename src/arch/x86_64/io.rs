@@ -9,17 +9,17 @@ impl Port {
         Port { number }
     }
 
-    pub unsafe fn write<T>(&self, data: T) where T: WritableToPort {
-        data.write_to_port(self.number)
+    pub unsafe fn write<T>(&self, data: T) where T: Output {
+        data.write_to(&self)
     }
 }
 
-pub trait WritableToPort {
-    unsafe fn write_to_port(&self, number: u16);
+pub trait Output {
+    unsafe fn write_to(&self, port: &Port);
 }
 
-impl WritableToPort for u8 {
-    unsafe fn write_to_port(&self, number: u16) {
-        outb(number, *self);
+impl Output for u8 {
+    unsafe fn write_to(&self, port: &Port) {
+        outb(port.number, *self)
     }
 }
