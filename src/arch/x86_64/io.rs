@@ -9,8 +9,8 @@ impl Port {
         Port { number }
     }
 
-    pub unsafe fn write<T>(&self, byte: T) where T: WritableToPort {
-        byte.write_to_port(self.number)
+    pub unsafe fn write<T>(&self, data: T) where T: WritableToPort {
+        data.write_to_port(self.number)
     }
 }
 
