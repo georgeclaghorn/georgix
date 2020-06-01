@@ -1,5 +1,8 @@
 use volatile::Volatile;
+use crate::arch::x86_64::instructions::rdmsr;
 use super::Vector;
+
+const IA32_APIC_BASE_MSR: u32 = 0x1B;
 
 #[repr(C)]
 pub struct APIC {
@@ -19,8 +22,13 @@ pub struct APIC {
 
 impl APIC {
     pub fn get() -> &'static mut APIC {
-        // TODO: Read the LAPIC's base address from the IA32_APIC_BASE MSR.
-        unsafe { &mut *(0xFEE00000 as *mut APIC) }
+        // This is safe because we get the APIC base from the appropriate MSR.
+        unsafe { &mut *(APIC::base() as *mut APIC) }
+    }
+
+    fn base() -> u64 {
+        // This is safe because the IA32_APIC_BASE MSR is architecture-specified.
+        unsafe { rdmsr(IA32_APIC_BASE_MSR) & 0xffffff000 }
     }
 
     pub fn initialize(&mut self) {
