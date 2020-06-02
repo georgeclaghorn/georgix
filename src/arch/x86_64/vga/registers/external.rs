@@ -4,7 +4,7 @@ use x86_64::instructions::port::Port;
 
 lazy_static! {
     pub static ref MISCELLANEOUS_OUTPUT_REGISTER: Mutex<Register> =
-        Mutex::new(unsafe { Register::new(0x3cc, 0x3c2) });
+        Mutex::new(unsafe { Register::new(0x3CC, 0x3C2) });
 }
 
 #[allow(dead_code)]

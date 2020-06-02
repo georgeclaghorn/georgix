@@ -6,16 +6,16 @@ use super::external::MISCELLANEOUS_OUTPUT_REGISTER;
 
 lazy_static! {
     pub static ref CURSOR_START_REGISTER: Mutex<Register> =
-        Mutex::new(unsafe { Register::new(&ADDRESS_PORT, &DATA_PORT, 0x0a) });
+        Mutex::new(unsafe { Register::new(&ADDRESS_PORT, &DATA_PORT, 0x0A) });
 
     static ref ADDRESS_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 4));
     static ref DATA_PORT: Mutex<Port<u8>> = Mutex::new(Port::new(*BASE + 5));
 
     static ref BASE: u16 =
         if MISCELLANEOUS_OUTPUT_REGISTER.lock().get(0) {
-            0x03d0
+            0x03D0
         } else {
-            0x03b0
+            0x03B0
         };
 }
 

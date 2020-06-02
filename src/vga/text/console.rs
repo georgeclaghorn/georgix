@@ -5,7 +5,7 @@ use super::*;
 
 lazy_static! {
     static ref CONSOLE: Mutex<Console> = Mutex::new(
-        Console::new(unsafe { &mut *(0xb8000 as *mut Buffer) })
+        Console::new(unsafe { &mut *(0xB8000 as *mut Buffer) })
     );
 
     static ref WRITER: Mutex<Writer> = Mutex::new(

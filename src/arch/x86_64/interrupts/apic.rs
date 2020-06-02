@@ -28,13 +28,13 @@ impl APIC {
 
     fn base() -> u64 {
         // This is safe because the IA32_APIC_BASE MSR is architecture-specified.
-        unsafe { rdmsr(IA32_APIC_BASE_MSR) & 0xffffff000 }
+        unsafe { rdmsr(IA32_APIC_BASE_MSR) & 0xFFFFFF000 }
     }
 
     pub fn initialize(&mut self) {
-        self.spurious_interrupt_vector_register.write(0x00000100 | Vector::SpuriousInterrupt);
+        self.spurious_interrupt_vector_register.write(0x100 | Vector::SpuriousInterrupt);
 
-        self.timer_vector_register.write(0x00020000 | Vector::Timer);
+        self.timer_vector_register.write(0x20000 | Vector::Timer);
         self.timer_initial_count_register.write(10000000);
         self.timer_divide_configuration_register.write(0xB);
         self.end_of_interrupt_register.write(0);

@@ -109,8 +109,8 @@ struct Character {
 impl Character {
     fn new(codepoint: u8, color: ColorCode) -> Character {
         match codepoint {
-            0x20..=0x7e => Character { codepoint, color },
-            _ => Character { codepoint: 0xfe, color }
+            0x20..=0x7E => Character { codepoint, color },
+            _ => Character { codepoint: 0xFE, color }
         }
     }
 
@@ -142,7 +142,7 @@ mod tests {
     fn constructing_a_character_with_an_invalid_codepoint() {
         assert_eq!(
             Character::new(195, ColorCode::new(Color::LightGray, Color::Black)),
-            Character { codepoint: 0xfe, color: ColorCode::new(Color::LightGray, Color::Black) }
+            Character { codepoint: 0xFE, color: ColorCode::new(Color::LightGray, Color::Black) }
         );
     }
 }
