@@ -6,17 +6,17 @@ const IA32_APIC_BASE_MSR: u32 = 0x1B;
 
 #[repr(C)]
 pub struct APIC {
-    _unused_1: [u32; 32],
+    _1: [u32; 32],
     task_priority_register: Volatile<u32>,
-    _unused_2: [u32; 11],
+    _2: [u32; 11],
     end_of_interrupt_register: Volatile<u32>,
-    _unused_3: [u32; 15],
+    _3: [u32; 15],
     spurious_interrupt_vector_register: Volatile<u32>,
-    _unused_4: [u32; 139],
+    _4: [u32; 139],
     timer_vector_register: Volatile<u32>,
-    _unused_5: [u32; 23],
+    _5: [u32; 23],
     timer_initial_count_register: Volatile<u32>,
-    _unused_6: [u32; 23],
+    _6: [u32; 23],
     timer_divide_configuration_register: Volatile<u32>
 }
 
