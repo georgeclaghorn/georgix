@@ -26,7 +26,7 @@ impl APIC {
 
     fn base() -> u64 {
         // This is safe because the IA32_APIC_BASE MSR is architecture-specified.
-        unsafe { crate::arch::x86_64::instructions::rdmsr(IA32_APIC_BASE_MSR) & 0xFFFFFF000 }
+        unsafe { crate::arch::x86_64::instructions::rdmsrq(IA32_APIC_BASE_MSR) & 0xFFFFFF000 }
     }
 
     pub fn initialize(&mut self) {

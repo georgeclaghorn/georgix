@@ -19,7 +19,7 @@ pub unsafe fn hlt() {
 }
 
 #[inline(always)]
-pub unsafe fn rdmsr(number: u32) -> u64 {
+pub unsafe fn rdmsrq(number: u32) -> u64 {
     let (high, low): (u64, u64);
     asm!("rdmsr", in("ecx") number, out("edx") high, out("eax") low, options(nomem, nostack));
     (high << 32) | low
