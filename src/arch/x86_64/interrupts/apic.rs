@@ -1,4 +1,3 @@
-use volatile::Volatile;
 use crate::arch::x86_64::instructions::rdmsr;
 use super::Vector;
 
@@ -7,17 +6,17 @@ const IA32_APIC_BASE_MSR: u32 = 0x1B;
 #[repr(C)]
 pub struct APIC {
     _1: [u32; 32],
-    task_priority_register: Volatile<u32>,
+    task_priority_register: volatile::ReadWrite<u32>,
     _2: [u32; 11],
-    end_of_interrupt_register: Volatile<u32>,
+    end_of_interrupt_register: volatile::WriteOnly<u32>,
     _3: [u32; 15],
-    spurious_interrupt_vector_register: Volatile<u32>,
+    spurious_interrupt_vector_register: volatile::ReadWrite<u32>,
     _4: [u32; 139],
-    timer_vector_register: Volatile<u32>,
+    timer_vector_register: volatile::ReadWrite<u32>,
     _5: [u32; 23],
-    timer_initial_count_register: Volatile<u32>,
+    timer_initial_count_register: volatile::ReadWrite<u32>,
     _6: [u32; 23],
-    timer_divide_configuration_register: Volatile<u32>
+    timer_divide_configuration_register: volatile::ReadWrite<u32>
 }
 
 impl APIC {
