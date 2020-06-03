@@ -89,7 +89,7 @@ _start:
     lgdt boot.global_descriptor_table.pointer
 
     # Populate the segment registers (except CS).
-    movw $(boot.global_descriptor_table.data), %ax
+    movw $boot.global_descriptor_table.data, %ax
     movw %ax, %ss
     movw %ax, %ds
     movw %ax, %es
@@ -103,7 +103,7 @@ _start:
     #
     # Pass the bootloader magic number and the address of the boot information record. We moved
     # them into the EDI and ESI argument registers earlier.
-    ljmp $(boot.global_descriptor_table.code), $(main)
+    ljmp $boot.global_descriptor_table.code, $main
 
     # The kernel shouldn't return, but if it does for some reason, park.
 1:  hlt
