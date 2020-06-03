@@ -1,10 +1,10 @@
-.globl start
+.globl _start
 .extern main
 
 .text
 .code32
 
-start:
+_start:
     # The bootloader provides:
     #
     # * A magic number in EAX
