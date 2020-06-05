@@ -1,3 +1,4 @@
+#[inline(always)]
 pub(super) fn rflags() -> u64 {
     let rflags: u64;
 
