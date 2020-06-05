@@ -12,22 +12,20 @@ mod test;
 
 use arch::*;
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 #[no_mangle]
 pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
-    initialize();
+    boot::console::initialize();
 
-    println!("Hello, {}!", "world");
-    println!("Yeah, what's up, world?");
+    println!("Georgix v{}", VERSION);
+
+    arch::initialize();
 
     #[cfg(test)]
     test();
 
     park();
-}
-
-fn initialize() {
-    boot::console::initialize();
-    arch::initialize();
 }
 
 #[cfg(not(test))]
