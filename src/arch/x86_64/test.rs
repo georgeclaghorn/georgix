@@ -19,7 +19,7 @@ pub mod console {
     }
 }
 
-use x86_64::instructions::port::Port;
+use super::io::Port;
 
 pub fn exit(status: u32) -> ! {
     unsafe {
