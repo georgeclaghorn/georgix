@@ -1,4 +1,4 @@
-use super::instructions::outb;
+use super::instructions::{inb, outb};
 
 pub struct Port {
     number: u16
@@ -9,13 +9,27 @@ impl Port {
         Port { number }
     }
 
-    pub unsafe fn write<T>(&self, data: T) where T: Output {
+    pub unsafe fn read<T>(&self) -> T where T: Input {
+        T::read_from(&self)
+    }
+
+    pub unsafe fn write<T>(&mut self, data: T) where T: Output {
         data.write_to(&self)
     }
 }
 
+pub trait Input {
+    unsafe fn read_from(port: &Port) -> Self;
+}
+
 pub trait Output {
     unsafe fn write_to(&self, port: &Port);
+}
+
+impl Input for u8 {
+    unsafe fn read_from(port: &Port) -> u8 {
+        inb(port.number)
+    }
 }
 
 impl Output for u8 {

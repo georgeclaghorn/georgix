@@ -1,6 +1,6 @@
 use lazy_static::*;
 use spin::Mutex;
-use x86_64::instructions::port::Port;
+use crate::arch::x86_64::io::Port;
 
 lazy_static! {
     pub static ref MISCELLANEOUS_OUTPUT_REGISTER: Mutex<Register> =
@@ -9,8 +9,8 @@ lazy_static! {
 
 #[allow(dead_code)]
 pub struct Register {
-    reading_port: Port<u8>,
-    writing_port: Port<u8>
+    reading_port: Port,
+    writing_port: Port
 }
 
 impl Register {
@@ -21,7 +21,7 @@ impl Register {
         }
     }
 
-    pub fn read(&mut self) -> u8 {
+    pub fn read(&self) -> u8 {
         unsafe { self.reading_port.read() }
     }
 
@@ -29,13 +29,12 @@ impl Register {
         unsafe { self.writing_port.write(value) }
     }
 
-    pub fn get(&mut self, index: u8) -> bool {
+    pub fn get(&self, index: u8) -> bool {
         self.read() & (1 << index) != 0
     }
 
     #[allow(dead_code)]
     pub fn set(&mut self, index: u8) {
-        let value = self.read();
-        self.write(value | (1 << index));
+        self.write(self.read() | (1 << index));
     }
 }

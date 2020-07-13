@@ -1,4 +1,11 @@
 #[inline(always)]
+pub unsafe fn inb(port: u16) -> u8 {
+    let byte: u8;
+    asm!("in al, dx", in("dx") port, out("al") byte, options(nomem, nostack));
+    byte
+}
+
+#[inline(always)]
 pub unsafe fn outb(port: u16, byte: u8) {
     asm!("out dx, al", in("dx") port, in("al") byte, options(nomem, nostack));
 }

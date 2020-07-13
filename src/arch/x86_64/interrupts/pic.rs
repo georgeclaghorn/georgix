@@ -10,7 +10,7 @@ impl ChainedPIC {
         ChainedPIC { parent, child }
     }
 
-    pub fn disable(&self) {
+    pub fn disable(&mut self) {
         self.parent.disable();
         self.child.disable();
     }
@@ -30,7 +30,7 @@ impl PIC {
         }
     }
 
-    pub fn disable(&self) {
+    pub fn disable(&mut self) {
         unsafe { self.data_port.write(0xFF); }
     }
 }
