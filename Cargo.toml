@@ -15,7 +15,6 @@ features = ["spin_no_std"]
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 x86_64 = "0.11.0"
 uart_16550 = "0.2.0"
-pic8259_simple = "0.2.0"
 
 [dev-dependencies.test]
 path = "./test"
