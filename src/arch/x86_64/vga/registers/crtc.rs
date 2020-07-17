@@ -41,7 +41,7 @@ impl Register {
         }
     }
 
-    pub fn write(&mut self, value: u8) {
+    pub fn write(&self, value: u8) {
         unsafe {
             self.address_port.lock().write(self.index);
             self.data_port.lock().write(value)
@@ -53,7 +53,7 @@ impl Register {
         self.read() & (1 << index) != 0
     }
 
-    pub fn set(&mut self, index: u8) {
+    pub fn set(&self, index: u8) {
         self.write(self.read() | (1 << index));
     }
 }

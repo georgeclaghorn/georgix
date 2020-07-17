@@ -25,7 +25,7 @@ impl Register {
         unsafe { self.reading_port.read() }
     }
 
-    pub fn write(&mut self, value: u8) {
+    pub fn write(&self, value: u8) {
         unsafe { self.writing_port.write(value) }
     }
 
@@ -34,7 +34,7 @@ impl Register {
     }
 
     #[allow(dead_code)]
-    pub fn set(&mut self, index: u8) {
+    pub fn set(&self, index: u8) {
         self.write(self.read() | (1 << index));
     }
 }

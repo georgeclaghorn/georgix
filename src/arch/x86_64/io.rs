@@ -13,7 +13,7 @@ impl Port {
         T::read_from(&self)
     }
 
-    pub unsafe fn write<T>(&mut self, data: T) where T: Output {
+    pub unsafe fn write<T>(&self, data: T) where T: Output {
         data.write_to(&self)
     }
 }
