@@ -1,11 +1,11 @@
 #![cfg(target_arch = "x86_64")]
 
-pub mod boot;
 pub mod vga;
 pub mod interrupts;
 
 pub mod test;
 
+mod boot;
 mod instructions;
 mod io;
 mod segmentation;
