@@ -2,6 +2,7 @@
 #![no_main]
 #![feature(asm, global_asm)]
 #![feature(abi_x86_interrupt)]
+#![feature(type_ascription)]
 
 #![reexport_test_harness_main = "test"]
 

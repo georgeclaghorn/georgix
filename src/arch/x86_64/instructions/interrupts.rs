@@ -7,3 +7,8 @@ pub unsafe fn sti() {
 pub unsafe fn cli() {
     asm!("cli", options(nomem, nostack));
 }
+
+#[inline(always)]
+pub unsafe fn lidt<T>(pointer: &T) {
+    asm!("lidt [{}]", in(reg) pointer);
+}

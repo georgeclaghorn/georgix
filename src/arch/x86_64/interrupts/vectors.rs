@@ -1,4 +1,4 @@
-#[repr(u8)]
+#[repr(usize)]
 pub enum Vector {
     Timer = 32,
     SpuriousInterrupt = 63

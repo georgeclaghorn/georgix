@@ -3,6 +3,9 @@ use vectors::Vector;
 
 mod handlers;
 
+mod idt;
+use idt::InterruptDescriptorTable;
+
 mod pic;
 use pic::{ChainedPIC, PIC};
 
@@ -10,7 +13,6 @@ mod apic;
 use apic::APIC;
 
 use lazy_static::lazy_static;
-use x86_64::structures::idt::InterruptDescriptorTable;
 use spin::Mutex;
 
 use super::util::rflags;
@@ -19,17 +21,17 @@ lazy_static! {
     static ref INTERRUPT_DESCRIPTOR_TABLE: InterruptDescriptorTable = {
         let mut table = InterruptDescriptorTable::new();
 
-        table.breakpoint.set_handler_fn(self::handlers::breakpoint);
+        table.breakpoint.handle_with(self::handlers::breakpoint);
 
         unsafe {
-            table.double_fault.set_handler_fn(self::handlers::double_fault)
-                .set_stack_index(super::segmentation::DOUBLE_FAULT_STACK_INDEX);
+            table.double_fault.handle_with(self::handlers::double_fault)
+                .on_stack_with_index(super::segmentation::DOUBLE_FAULT_STACK_INDEX);
         }
 
-        table.general_protection_fault.set_handler_fn(self::handlers::general_protection_fault);
-        table.page_fault.set_handler_fn(self::handlers::page_fault);
+        table.general_protection_fault.handle_with(self::handlers::general_protection_fault);
+        table.page_fault.handle_with(self::handlers::page_fault);
 
-        table[Vector::Timer.into()].set_handler_fn(self::handlers::timer);
+        table[Vector::Timer].handle_with(self::handlers::timer);
 
         table
     };

@@ -1,5 +1,6 @@
-use x86_64::structures::idt::{InterruptStackFrame, PageFaultErrorCode};
+use x86_64::structures::idt::InterruptStackFrame;
 use crate::{println, print};
+use super::idt::PageFaultErrorCode;
 use super::complete;
 
 pub extern "x86-interrupt" fn breakpoint(stack_frame: &mut InterruptStackFrame) {
