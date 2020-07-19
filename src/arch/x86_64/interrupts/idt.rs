@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 use x86_64::structures::idt::InterruptStackFrame;
@@ -212,29 +214,21 @@ impl<H> Entry<H> {
     }
 }
 
-impl Entry<Handler> {
-    pub fn handle_with(&mut self, handler: Handler) -> &mut EntryOptions {
-        self.handle_at_address(handler as u64)
+macro_rules! handle_with_impl_for {
+    ($h:ty) => {
+        impl Entry<$h> {
+            pub fn handle_with(&mut self, handler: $h) -> &mut EntryOptions {
+                self.handle_at_address(handler as u64)
+            }
+        }
     }
 }
 
-impl Entry<HandlerWithErrorCode> {
-    pub fn handle_with(&mut self, handler: HandlerWithErrorCode) -> &mut EntryOptions {
-        self.handle_at_address(handler as u64)
-    }
-}
-
-impl Entry<DivergingHandlerWithErrorCode> {
-    pub fn handle_with(&mut self, handler: DivergingHandlerWithErrorCode) -> &mut EntryOptions {
-        self.handle_at_address(handler as u64)
-    }
-}
-
-impl Entry<PageFaultHandler> {
-    pub fn handle_with(&mut self, handler: PageFaultHandler) -> &mut EntryOptions {
-        self.handle_at_address(handler as u64)
-    }
-}
+handle_with_impl_for!(Handler);
+handle_with_impl_for!(HandlerWithErrorCode);
+handle_with_impl_for!(DivergingHandler);
+handle_with_impl_for!(DivergingHandlerWithErrorCode);
+handle_with_impl_for!(PageFaultHandler);
 
 
 #[repr(transparent)]
