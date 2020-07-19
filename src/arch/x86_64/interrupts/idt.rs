@@ -4,6 +4,7 @@ use x86_64::structures::idt::InterruptStackFrame;
 use bit_field::BitField;
 use bitflags::bitflags;
 use super::Vector;
+use crate::arch::x86_64::instructions::{PointerDescriptor, lidt};
 
 #[derive(Clone)]
 #[repr(C)]
@@ -83,7 +84,7 @@ impl InterruptDescriptorTable {
 
     pub fn load(&self) {
         unsafe {
-            crate::arch::x86_64::instructions::lidt(
+            lidt(
                 &PointerDescriptor {
                     limit: (core::mem::size_of::<Self>() - 1) as u16,
                     base: self as *const _ as u64
@@ -275,14 +276,6 @@ bitflags! {
         const MALFORMED_TABLE      = 1 << 3;
         const INSTRUCTION_FETCH    = 1 << 4;
     }
-}
-
-
-#[derive(Debug, Clone, Copy)]
-#[repr(C, packed)]
-struct PointerDescriptor {
-    limit: u16,
-    base: u64
 }
 
 
