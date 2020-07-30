@@ -6,6 +6,8 @@
 
 #![reexport_test_harness_main = "test"]
 
+extern crate rlibc;
+
 mod arch;
 mod boot;
 mod vga;
