@@ -10,9 +10,9 @@ _start:
     # * A magic number in EAX
     # * The physical address of the boot information record in EBX
     #
-    # We clobber EAX and EBX, so save these values in EDI and ESI to pass to the Rust entrypoint later.
-    movl %eax, %edi
-    movl %ebx, %esi
+    # We clobber EAX and EBX, so save these values on the stack to pass to the Rust entrypoint later.
+    pushl %ebx
+    pushl %eax
 
     # The bootloader leaves the CPU in 32-bit protected mode. We want to switch into 64-bit long
     # mode before jumping into Rust. This requires that we activate paging.
@@ -101,8 +101,10 @@ _start:
     # descriptor has its L bit set to indicate it contains 64-bit code, so jumping into it has the
     # effect of entering 64-bit mode.
     #
-    # Pass the bootloader magic number and the address of the boot information record. We moved
-    # them into the EDI and ESI argument registers earlier.
+    # Pass the bootloader magic number and the address of the boot information record as parameters.
+    # Rust declares main to use the C calling convention, so the first two parameters go in EDI and ESI.
+    popl %edi
+    popl %esi
     ljmp $boot.global_descriptor_table.code, $main
 
     # The kernel shouldn't return, but if it does for some reason, park.
@@ -132,10 +134,10 @@ boot.global_descriptor_table:
     .quad 0
 
 .equ boot.global_descriptor_table.code, . - boot.global_descriptor_table
-    .quad (1 << 53) | (1 << 47) | (1 << 44) | (1 << 43) | (1 << 41)
+    .quad (1 << 55) | (1 << 53) | (0xF << 48) | (1 << 47) | (1 << 44) | (1 << 43) | (1 << 41) | 0xFFFF
 
 .equ boot.global_descriptor_table.data, . - boot.global_descriptor_table
-    .quad (1 << 47) | (1 << 44) | (1 << 41)
+    .quad (1 << 55) | (1 << 54) | (0xF << 48) | (1 << 47) | (1 << 44) | (1 << 41) | 0xFFFF
 
 boot.global_descriptor_table.pointer:
     .word . - boot.global_descriptor_table - 1
