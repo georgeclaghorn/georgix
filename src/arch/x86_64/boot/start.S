@@ -130,12 +130,31 @@ boot.page_directory_table:
 
 .section .rodata
 
+# This is the early-boot global descriptor table, only used to switch into 64-bit long mode and
+# call into the Rust kernel. The kernel replaces it immediately on boot.
 boot.global_descriptor_table:
     .quad 0
 
+# Kernel code segment
+#
+#   Base*: 0
+#   Limit*: 0xFFFFF
+#   Granularity*: 4 KB
+#   Flags: Present (P), Readable (R), Long Mode (L)
+#
+# * Used in 32-bit compatibility mode, ignored in 64-bit long mode.
 .equ boot.global_descriptor_table.code, . - boot.global_descriptor_table
     .quad (1 << 55) | (1 << 53) | (0xF << 48) | (1 << 47) | (1 << 44) | (1 << 43) | (1 << 41) | 0xFFFF
 
+# Kernel data segment
+#
+#   Base*: 0
+#   Limit*: 0xFFFFF
+#   Granularity*: 4 KB
+#   Stack Pointer Size*: 32 bits
+#   Flags: Present (P), Readable (R)
+#
+# * Used in 32-bit compatibility mode, ignored in 64-bit long mode.
 .equ boot.global_descriptor_table.data, . - boot.global_descriptor_table
     .quad (1 << 55) | (1 << 54) | (0xF << 48) | (1 << 47) | (1 << 44) | (1 << 41) | 0xFFFF
 
