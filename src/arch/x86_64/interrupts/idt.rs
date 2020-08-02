@@ -2,10 +2,10 @@
 
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
-use x86_64::structures::idt::InterruptStackFrame;
 use bit_field::BitField;
 use bitflags::bitflags;
 use super::Vector;
+use crate::arch::x86_64::addresses::VirtualAddress;
 use crate::arch::x86_64::instructions::{Pointer, lidt};
 
 #[derive(Clone)]
@@ -245,14 +245,24 @@ impl EntryOptions {
 }
 
 
-pub type Handler = extern "x86-interrupt" fn (&mut InterruptStackFrame);
-pub type HandlerWithErrorCode = extern "x86-interrupt" fn (&mut InterruptStackFrame, u64);
+pub type Handler = extern "x86-interrupt" fn (&InterruptStackFrame);
+pub type HandlerWithErrorCode = extern "x86-interrupt" fn (&InterruptStackFrame, u64);
 
-pub type DivergingHandler = extern "x86-interrupt" fn (&mut InterruptStackFrame) -> !;
-pub type DivergingHandlerWithErrorCode = extern "x86-interrupt" fn (&mut InterruptStackFrame, u64) -> !;
+pub type DivergingHandler = extern "x86-interrupt" fn (&InterruptStackFrame) -> !;
+pub type DivergingHandlerWithErrorCode = extern "x86-interrupt" fn (&InterruptStackFrame, u64) -> !;
 
-pub type PageFaultHandler = extern "x86-interrupt" fn (&mut InterruptStackFrame, PageFaultErrorCode);
+pub type PageFaultHandler = extern "x86-interrupt" fn (&InterruptStackFrame, PageFaultErrorCode);
 
+
+#[repr(C)]
+#[derive(Debug)]
+pub struct InterruptStackFrame {
+    pub instruction_pointer: VirtualAddress,
+    pub code_segment: u64,
+    pub flags: u64,
+    pub stack_pointer: VirtualAddress,
+    pub stack_segment: u64
+}
 
 bitflags! {
     #[repr(transparent)]

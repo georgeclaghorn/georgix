@@ -5,6 +5,7 @@ pub mod interrupts;
 
 pub mod test;
 
+mod addresses;
 mod boot;
 mod instructions;
 mod io;
