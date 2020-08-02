@@ -5,6 +5,9 @@
 .code32
 
 _start:
+    # We'll need a stack next, so set one up. The stack grows down from a high address.
+    movl $boot.stack.high, %esp
+
     # The bootloader provides:
     #
     # * A magic number in EAX
@@ -126,6 +129,10 @@ boot.page_directory_pointer_table:
 
 boot.page_directory_table:
     .skip 2 * 4096
+
+boot.stack.low:
+    .skip 4 * 4096
+    .equ boot.stack.high, .
 
 
 .section .rodata
