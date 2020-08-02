@@ -85,14 +85,7 @@ impl InterruptDescriptorTable {
     }
 
     pub fn load(&self) {
-        unsafe {
-            lidt(
-                &PointerDescriptor {
-                    limit: (core::mem::size_of::<Self>() - 1) as u16,
-                    base: self as *const _ as u64
-                }
-            )
-        }
+        unsafe { lidt(&PointerDescriptor::new(self)) }
     }
 }
 
