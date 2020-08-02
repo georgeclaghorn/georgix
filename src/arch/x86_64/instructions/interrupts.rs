@@ -9,6 +9,6 @@ pub unsafe fn cli() {
 }
 
 #[inline(always)]
-pub unsafe fn lidt<T>(pointer: &super::PointerDescriptor<T>) {
+pub unsafe fn lidt<T>(pointer: &super::Pointer<T>) {
     asm!("lidt [{}]", in(reg) pointer);
 }

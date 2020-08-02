@@ -8,14 +8,14 @@ mod misc;
 pub use misc::*;
 
 #[repr(C, packed)]
-pub struct PointerDescriptor<T> {
+pub struct Pointer<T> {
     limit: u16,
     base: *const T
 }
 
-impl<T> PointerDescriptor<T> {
-    pub fn new(target: &T) -> PointerDescriptor<T> {
-        PointerDescriptor {
+impl<T> Pointer<T> {
+    pub fn new(target: &T) -> Pointer<T> {
+        Pointer {
             limit: core::mem::size_of::<T>() as u16,
             base: target as *const T
         }

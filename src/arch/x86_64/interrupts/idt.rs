@@ -6,7 +6,7 @@ use x86_64::structures::idt::InterruptStackFrame;
 use bit_field::BitField;
 use bitflags::bitflags;
 use super::Vector;
-use crate::arch::x86_64::instructions::{PointerDescriptor, lidt};
+use crate::arch::x86_64::instructions::{Pointer, lidt};
 
 #[derive(Clone)]
 #[repr(C)]
@@ -85,7 +85,7 @@ impl InterruptDescriptorTable {
     }
 
     pub fn load(&self) {
-        unsafe { lidt(&PointerDescriptor::new(self)) }
+        unsafe { lidt(&Pointer::new(self)) }
     }
 }
 
