@@ -15,8 +15,6 @@ use apic::APIC;
 use lazy_static::lazy_static;
 use spin::Mutex;
 
-use super::util::rflags;
-
 lazy_static! {
     static ref INTERRUPT_DESCRIPTOR_TABLE: InterruptDescriptorTable = {
         let mut table = InterruptDescriptorTable::new();
@@ -61,7 +59,7 @@ pub(super) fn disable() {
 }
 
 pub(super) fn enabled() -> bool {
-    (rflags() & 0x200) != 0
+    (super::flags() & 0x200) != 0
 }
 
 pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {

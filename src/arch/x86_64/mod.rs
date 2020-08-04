@@ -5,12 +5,13 @@ pub mod interrupts;
 
 pub mod test;
 
+mod instructions;
+use instructions::flags;
+
 mod addresses;
 mod boot;
-mod instructions;
 mod io;
 mod segmentation;
-mod util;
 
 pub fn initialize() {
     segmentation::initialize();
