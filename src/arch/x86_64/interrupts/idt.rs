@@ -181,7 +181,7 @@ pub struct Entry<H> {
 impl<H> Entry<H> {
     pub fn new() -> Entry<H> {
         Entry {
-            code_segment_selector: x86_64::instructions::segmentation::cs().0,
+            code_segment_selector: crate::arch::x86_64::segmentation::get_code_segment_selector(),
             pointer_low: 0,
             pointer_middle: 0,
             pointer_high: 0,

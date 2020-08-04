@@ -35,24 +35,39 @@ struct Selectors {
 }
 
 pub fn initialize() {
-    use x86_64::instructions::segmentation::set_cs;
-    use x86_64::instructions::tables::load_tss;
-
     GLOBAL_DESCRIPTOR_TABLE.0.load();
 
     unsafe {
-        set_cs(GLOBAL_DESCRIPTOR_TABLE.1.code_selector);
-        clear_ss();
-        load_tss(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector);
+        set_code_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.code_selector.0);
+        set_stack_segment_selector(0);
+        set_task_state_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector.0);
     }
 }
 
-unsafe fn clear_ss() {
-    set_ss(0);
+pub fn get_code_segment_selector() -> u16 {
+    let selector: u16;
+    unsafe { asm!("mov {:x}, cs", out(reg) selector, options(nomem, nostack)); }
+    selector
 }
 
-unsafe fn set_ss(value: u16) {
-    asm!("mov ss, {:x}", in(reg) value);
+unsafe fn set_code_segment_selector(value: u16) {
+    asm!(
+        "push {0:r}",
+        "lea {0:r}, [rip + 1f]",
+        "push {0:r}",
+        "rex64 retf",
+        "1:",
+        inlateout(reg) value => _,
+        options(nomem)
+    )
+}
+
+unsafe fn set_stack_segment_selector(value: u16) {
+    asm!("mov ss, {:x}", in(reg) value, options(nomem, nostack))
+}
+
+unsafe fn set_task_state_segment_selector(value: u16) {
+    asm!("ltr {:x}", in(reg) value, options(nomem, nostack))
 }
 
 #[cfg(test)]
