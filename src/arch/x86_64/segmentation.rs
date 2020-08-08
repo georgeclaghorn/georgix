@@ -6,6 +6,13 @@ use x86_64::VirtAddr;
 pub const DOUBLE_FAULT_STACK_INDEX: u16 = 0;
 
 lazy_static! {
+    static ref GLOBAL_DESCRIPTOR_TABLE: (GlobalDescriptorTable, Selectors) = {
+        let mut table = GlobalDescriptorTable::new();
+        let code_selector = table.add_entry(Descriptor::kernel_code_segment());
+        let task_state_segment_selector = table.add_entry(Descriptor::tss_segment(&TASK_STATE_SEGMENT));
+        (table, Selectors { code_selector, task_state_segment_selector })
+    };
+
     static ref TASK_STATE_SEGMENT: TaskStateSegment = {
         let mut tss = TaskStateSegment::new();
 
@@ -19,13 +26,6 @@ lazy_static! {
         };
 
         tss
-    };
-
-    static ref GLOBAL_DESCRIPTOR_TABLE: (GlobalDescriptorTable, Selectors) = {
-        let mut table = GlobalDescriptorTable::new();
-        let code_selector = table.add_entry(Descriptor::kernel_code_segment());
-        let task_state_segment_selector = table.add_entry(Descriptor::tss_segment(&TASK_STATE_SEGMENT));
-        (table, Selectors { code_selector, task_state_segment_selector })
     };
 }
 
