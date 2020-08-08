@@ -39,7 +39,7 @@ pub fn initialize() {
 
     unsafe {
         set_code_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.code_selector.0);
-        set_stack_segment_selector(0);
+        invalidate_stack_segment_selector();
         set_task_state_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector.0);
     }
 }
@@ -62,6 +62,17 @@ unsafe fn set_code_segment_selector(value: u16) {
     )
 }
 
+#[allow(dead_code)]
+fn get_stack_segment_selector() -> u16 {
+    let selector: u16;
+    unsafe { asm!("mov {:x}, ss", out(reg) selector, options(nomem, nostack)); }
+    selector
+}
+
+unsafe fn invalidate_stack_segment_selector() {
+    set_stack_segment_selector(0)
+}
+
 unsafe fn set_stack_segment_selector(value: u16) {
     asm!("mov ss, {:x}", in(reg) value, options(nomem, nostack))
 }
@@ -72,10 +83,10 @@ unsafe fn set_task_state_segment_selector(value: u16) {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn clearing_ss() {
-        let ss;
-        unsafe { asm!("mov {:x}, ss", out(reg) ss); }
-        assert_eq!(0, ss);
+    fn invalidating_the_stack_segment_selector_on_boot() {
+        assert_eq!(0, get_stack_segment_selector())
     }
 }
