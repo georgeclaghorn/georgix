@@ -8,6 +8,8 @@ edition = "2018"
 rlibc = "1.0.0"
 spin = "0.5.2"
 volatile = "0.2.6"
+bit_field = "0.10.0"
+bitflags = "1.2.1"
 
 [dependencies.lazy_static]
 version = "1.0"
@@ -16,8 +18,6 @@ features = ["spin_no_std"]
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 x86_64 = "0.11.0"
 uart_16550 = "0.2.0"
-bit_field = "0.10.0"
-bitflags = "1.2.1"
 
 [dev-dependencies.test]
 path = "./test"
