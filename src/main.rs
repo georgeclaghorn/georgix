@@ -13,7 +13,7 @@ mod boot;
 mod vga;
 mod test;
 
-use arch::*;
+use arch::park;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
