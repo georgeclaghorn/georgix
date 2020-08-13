@@ -17,9 +17,11 @@ pub struct APIC {
 }
 
 impl APIC {
-    pub fn get() -> &'static mut APIC {
-        // This is safe because we get the APIC base from the appropriate MSR.
-        unsafe { &mut *(APIC::base() as *mut APIC) }
+    // This function is unsafe because two separate callers will get mutable references to the same
+    // underlying data. It is the caller’s responsibility to ensure no other code writes to the
+    // APIC concurrently.
+    pub unsafe fn get() -> &'static mut APIC {
+        &mut *(APIC::base() as *mut APIC)
     }
 
     fn base() -> u64 {

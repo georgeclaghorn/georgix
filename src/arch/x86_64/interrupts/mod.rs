@@ -41,7 +41,7 @@ lazy_static! {
         )
     );
 
-    static ref LAPIC: Mutex<&'static mut APIC> = Mutex::new(APIC::get());
+    static ref LAPIC: Mutex<&'static mut APIC> = Mutex::new(unsafe { APIC::get() });
 }
 
 pub(super) fn initialize() {
