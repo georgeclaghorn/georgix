@@ -6,11 +6,11 @@ const IA32_APIC_BASE_MSR: u32 = 0x1B;
 pub struct APIC {
     _1: [u32; 44],
     end_of_interrupt_register: volatile::WriteOnly<u32>,
-    _3: [u32; 155],
+    _2: [u32; 155],
     timer_vector_register: volatile::ReadWrite<u32>,
-    _5: [u32; 23],
+    _3: [u32; 23],
     timer_initial_count_register: volatile::ReadWrite<u32>,
-    _6: [u32; 23],
+    _4: [u32; 23],
     timer_divide_configuration_register: volatile::ReadWrite<u32>
 }
 
