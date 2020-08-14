@@ -4,9 +4,7 @@ const IA32_APIC_BASE_MSR: u32 = 0x1B;
 
 #[repr(C)]
 pub struct APIC {
-    _1: [u32; 32],
-    task_priority_register: volatile::ReadWrite<u32>,
-    _2: [u32; 11],
+    _1: [u32; 44],
     end_of_interrupt_register: volatile::WriteOnly<u32>,
     _3: [u32; 155],
     timer_vector_register: volatile::ReadWrite<u32>,
@@ -34,8 +32,6 @@ impl APIC {
         self.timer_initial_count_register.write(10000000);
         self.timer_divide_configuration_register.write(0xB);
         self.end_of_interrupt_register.write(0);
-
-        self.task_priority_register.write(0);
     }
 
     pub fn complete(&mut self) {
