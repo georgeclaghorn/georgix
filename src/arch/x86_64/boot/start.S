@@ -44,7 +44,7 @@ _start:
     # We set an extra metadata bit, the Page Size Bit (0b10000000), to indicate that the PDTEs are
     # leaves and that the frames they point to are each 2 MB.
     movl $0, %ecx
-1:  movl 0x200000, %eax
+1:  movl $0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
     movl %eax, boot.page_directory_table(,%ecx,8)
