@@ -30,7 +30,6 @@ dependencies = [
  "test",
  "uart_16550",
  "volatile",
- "x86_64",
 ]
 
 [[package]]

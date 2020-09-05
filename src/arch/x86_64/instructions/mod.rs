@@ -4,6 +4,9 @@ pub use interrupts::*;
 mod io;
 pub use io::*;
 
+mod segmentation;
+pub use segmentation::*;
+
 mod misc;
 pub use misc::*;
 
