@@ -34,7 +34,7 @@ impl<T> From<&T> for VirtualAddress {
     }
 }
 
-impl <T> From<*const T> for VirtualAddress {
+impl<T> From<*const T> for VirtualAddress {
     fn from(target: *const T) -> VirtualAddress {
         VirtualAddress::new(target as u64)
     }
