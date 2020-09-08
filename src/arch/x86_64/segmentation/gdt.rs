@@ -55,7 +55,7 @@ impl GlobalDescriptorTable {
     }
 
     pub fn load(&self) {
-        unsafe { lgdt(&Pointer::new(self)) }
+        unsafe { lgdt(&Pointer::new(&self.entries)) }
     }
 }
 
