@@ -34,7 +34,7 @@ impl APIC {
         self.end_of_interrupt_register.write(0);
     }
 
-    pub fn complete(&mut self) {
+    pub fn acknowledge(&mut self) {
         self.end_of_interrupt_register.write(0);
     }
 }

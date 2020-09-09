@@ -78,6 +78,6 @@ pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
     result
 }
 
-fn complete() {
-    LAPIC.lock().complete();
+fn acknowledge() {
+    LAPIC.lock().acknowledge();
 }
