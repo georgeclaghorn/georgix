@@ -34,8 +34,8 @@ _start:
     orl $0b11, %eax
     movl %eax, boot.page_map_level_4_table
 
-    # Add one entry to the PDPT pointing to the Page Directory Table.
-    movl $boot.page_directory_table, %eax
+    # Add one entry to PDPT pointing to the Page Directory Table.
+    movl $boot.page_directory_table.0, %eax
     orl $0b11, %eax
     movl %eax, boot.page_directory_pointer_table
 
@@ -47,7 +47,7 @@ _start:
 1:  movl $0x200000, %eax
     mull %ecx
     orl $0b10000011, %eax
-    movl %eax, boot.page_directory_table(,%ecx,8)
+    movl %eax, boot.page_directory_table.0(,%ecx,8)
     inc %ecx
     cmpl $512, %ecx
     jne 1b
@@ -55,15 +55,15 @@ _start:
     # Next we'll identity-map the LAPIC register file. It's in the 4 KB of physical memory starting
     # at 0xFEE00000, near the top of the 32-bit address space.
 
-    # Populate the fourth PDPE. Point it at a second PDT.
-    movl $(boot.page_directory_table + 0x1000), %eax
+    # Populate the fourth PDPE. Point it at a new PDT.
+    movl $boot.page_directory_table.3, %eax
     orl $0b11, %eax
     movl %eax, boot.page_directory_pointer_table + 24
 
     # Populate the 504th entry of the second PDT. Point to the 2 MB frame at 0xFEE00000.
     movl $0xFEE00000, %eax
     orl $0b10000011, %eax
-    movl %eax, boot.page_directory_table + 0x1FB8
+    movl %eax, boot.page_directory_table.3 + 0xFB8
 
     # Load the PML4 Table.
     movl $boot.page_map_level_4_table, %eax
@@ -127,8 +127,11 @@ boot.page_map_level_4_table:
 boot.page_directory_pointer_table:
     .skip 4096
 
-boot.page_directory_table:
-    .skip 2 * 4096
+boot.page_directory_table.0:
+    .skip 4096
+
+boot.page_directory_table.3:
+    .skip 4096
 
 boot.stack.low:
     .skip 4 * 4096
