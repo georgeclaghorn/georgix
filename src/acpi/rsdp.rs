@@ -26,10 +26,10 @@ impl RSDP {
 
     unsafe fn scan(area: Range<usize>) -> Option<RSDP> {
         area.step_by(16).find_map(|address| {
-            let pointer = address as *const [u8; 8];
+            let signature = address as *const [u8; 8];
 
-            if *pointer == *SIGNATURE {
-                Some(*(pointer as *const RSDP))
+            if *signature == *SIGNATURE {
+                Some(*(address as *const RSDP))
             } else {
                 None
             }
