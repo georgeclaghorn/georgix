@@ -14,8 +14,11 @@ mod io;
 mod multitasking;
 mod segmentation;
 
+use crate::acpi;
+
 pub fn initialize() {
     segmentation::initialize();
+    acpi::initialize();
     interrupts::initialize();
     interrupts::enable();
 }

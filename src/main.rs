@@ -8,6 +8,7 @@
 
 mod arch;
 mod boot;
+mod acpi;
 mod vga;
 mod test;
 
