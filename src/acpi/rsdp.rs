@@ -1,4 +1,7 @@
+use core::ops::Range;
+
 const SIGNATURE: &[u8; 8] = b"RSD PTR ";
+const LENGTH: usize = 24;
 
 #[repr(C, packed)]
 #[derive(Copy, Clone, Debug)]
@@ -13,16 +16,35 @@ pub struct RSDP {
 impl RSDP {
     pub fn find() -> Option<RSDP> {
         // Search the BIOS ROM.
-        (0xE0000..0xFFFFF).step_by(16).find_map(|address| {
+        RSDP::find_in(0xE0000..0xFFFFF)
+    }
+
+    fn find_in(area: Range<usize>) -> Option<RSDP> {
+        // This is safe because we validate the resulting RSDP.
+        unsafe { RSDP::scan(area) }.filter(|rsdp| rsdp.validate())
+    }
+
+    unsafe fn scan(area: Range<usize>) -> Option<RSDP> {
+        area.step_by(16).find_map(|address| {
             let pointer = address as *const [u8; 8];
 
-            unsafe {
-                if *pointer == *SIGNATURE {
-                    Some(*(pointer as *const RSDP))
-                } else {
-                    None
-                }
+            if *pointer == *SIGNATURE {
+                Some(*(pointer as *const RSDP))
+            } else {
+                None
             }
         })
+    }
+
+    fn validate(&self) -> bool {
+        self.revision == 0 && self.sum() == 0
+    }
+
+    fn sum(&self) -> u8 {
+        self.as_bytes().iter().fold(0, |sum, &byte| sum.wrapping_add(byte))
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+        unsafe { core::slice::from_raw_parts(self as *const RSDP as *const u8, LENGTH) }
     }
 }
