@@ -48,3 +48,50 @@ impl RSDP {
         unsafe { core::slice::from_raw_parts(self as *const RSDP as *const u8, LENGTH) }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn validating_when_valid() {
+        let rsdp =
+            RSDP {
+                signature: *b"RSD PTR ",
+                checksum:  103,
+                oem_id:    *b"BOCHS ",
+                revision:  0,
+                address:   0x7FE14D2
+            };
+
+        assert!(rsdp.validate());
+    }
+
+    #[test]
+    fn validating_with_unsupported_revision() {
+        let rsdp =
+            RSDP {
+                signature: *b"RSD PTR ",
+                checksum:  102,
+                oem_id:    *b"BOCHS ",
+                revision:  1,
+                address:   0x7FE14D2
+            };
+
+        assert!(!rsdp.validate());
+    }
+
+    #[test]
+    fn validating_with_incorrect_checksum() {
+        let rsdp =
+            RSDP {
+                signature: *b"RSD PTR ",
+                checksum:  23,
+                oem_id:    *b"BOCHS ",
+                revision:  0,
+                address:   0x7FE14D2
+            };
+
+        assert!(!rsdp.validate());
+    }
+}
