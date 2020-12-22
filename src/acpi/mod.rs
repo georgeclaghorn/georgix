@@ -10,3 +10,13 @@ pub fn initialize() {
         RSDP.lock().replace(rsdp);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn finding_the_rsdp_on_boot() {
+        assert!(RSDP.lock().is_some());
+    }
+}
