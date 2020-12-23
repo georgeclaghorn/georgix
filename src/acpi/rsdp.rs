@@ -1,7 +1,6 @@
 use core::ops::Range;
 
 const SIGNATURE: &[u8; 8] = b"RSD PTR ";
-const LENGTH: usize = 24;
 
 #[repr(C, packed)]
 #[derive(Copy, Clone, Debug)]
@@ -10,7 +9,7 @@ pub struct RSDP {
     checksum:  u8,
     oem_id:    [u8; 6],
     revision:  u8,
-    address:   usize
+    address:   u32
 }
 
 impl RSDP {
@@ -45,7 +44,7 @@ impl RSDP {
     }
 
     fn as_bytes(&self) -> &[u8] {
-        unsafe { core::slice::from_raw_parts(self as *const RSDP as *const u8, LENGTH) }
+        unsafe { core::slice::from_raw_parts(self as *const RSDP as *const u8, core::mem::size_of::<RSDP>()) }
     }
 }
 
