@@ -1,4 +1,5 @@
 use core::ops::Range;
+use core::convert::TryInto;
 
 const SIGNATURE: &[u8; 8] = b"RSD PTR ";
 
@@ -11,6 +12,7 @@ pub struct RSDP {
     revision:     u8,
     rsdt_address: u32,
 
+    // These fields are only available for revision > 0.
     length:       u32,
     xsdt_address: u64,
     _2:           u8,
@@ -40,20 +42,12 @@ impl RSDP {
         })
     }
 
-    pub fn rsdt_address(&self) -> Option<u32> {
+    pub fn address(&self) -> Option<usize> {
         if self.revision == 0 {
-            Some(self.rsdt_address)
+            self.rsdt_address.try_into()
         } else {
-            None
-        }
-    }
-
-    pub fn xsdt_address(&self) -> Option<u64> {
-        if self.revision == 1 {
-            Some(self.xsdt_address)
-        } else {
-            None
-        }
+            self.xsdt_address.try_into()
+        }.ok()
     }
 
     fn validate(&self) -> bool {
@@ -65,7 +59,7 @@ impl RSDP {
     }
 
     fn as_bytes(&self) -> &[u8] {
-        unsafe { core::slice::from_raw_parts(self as *const RSDP as *const u8, self.length()) }
+        unsafe { core::slice::from_raw_parts(self as *const _ as *const u8, self.length()) }
     }
 
     fn length(&self) -> usize {
@@ -135,6 +129,6 @@ mod tests {
                 _3:           [0; 3]
             };
 
-        assert_eq!(Some(0x7FE14D2), rsdp.rsdt_address());
+        assert_eq!(Some(0x7FE14D2), rsdp.address());
     }
 }
