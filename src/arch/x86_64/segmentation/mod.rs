@@ -3,7 +3,7 @@ use gdt::{GlobalDescriptorTable, Selector, Descriptor};
 
 use super::multitasking::TaskStateSegment;
 use super::addresses::VirtualAddress;
-use super::registers::segmentation::*;
+use super::registers::*;
 
 use lazy_static::lazy_static;
 

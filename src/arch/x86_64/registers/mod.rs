@@ -1,1 +1,2 @@
-pub mod segmentation;
+mod segmentation;
+pub use segmentation::*;

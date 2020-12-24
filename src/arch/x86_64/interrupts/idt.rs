@@ -7,7 +7,7 @@ use bitflags::bitflags;
 use super::Vector;
 use crate::arch::x86_64::addresses::VirtualAddress;
 use crate::arch::x86_64::instructions::{Pointer, lidt};
-use crate::arch::x86_64::registers::segmentation::CS;
+use crate::arch::x86_64::registers::CS;
 
 #[derive(Clone)]
 #[repr(C)]
