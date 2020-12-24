@@ -12,6 +12,7 @@ mod addresses;
 mod boot;
 mod io;
 mod multitasking;
+mod registers;
 mod segmentation;
 
 use crate::acpi;

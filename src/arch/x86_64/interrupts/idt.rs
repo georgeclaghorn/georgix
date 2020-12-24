@@ -7,6 +7,7 @@ use bitflags::bitflags;
 use super::Vector;
 use crate::arch::x86_64::addresses::VirtualAddress;
 use crate::arch::x86_64::instructions::{Pointer, lidt};
+use crate::arch::x86_64::registers::segmentation::CS;
 
 #[derive(Clone)]
 #[repr(C)]
@@ -181,7 +182,7 @@ pub struct Entry<H> {
 impl<H> Entry<H> {
     pub fn new() -> Entry<H> {
         Entry {
-            code_segment_selector: crate::arch::x86_64::segmentation::get_code_segment_selector(),
+            code_segment_selector: CS::get(),
             pointer_low: 0,
             pointer_middle: 0,
             pointer_high: 0,

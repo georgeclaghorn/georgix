@@ -3,6 +3,7 @@ use gdt::{GlobalDescriptorTable, Selector, Descriptor};
 
 use super::multitasking::TaskStateSegment;
 use super::addresses::VirtualAddress;
+use super::registers::segmentation::*;
 
 use lazy_static::lazy_static;
 
@@ -39,47 +40,10 @@ pub fn initialize() {
     GLOBAL_DESCRIPTOR_TABLE.0.load();
 
     unsafe {
-        set_code_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.code_selector.into());
-        invalidate_stack_segment_selector();
-        set_task_state_segment_selector(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector.into());
+        CS::set(GLOBAL_DESCRIPTOR_TABLE.1.code_selector.into());
+        SS::invalidate();
+        TR::set(GLOBAL_DESCRIPTOR_TABLE.1.task_state_segment_selector.into());
     }
-}
-
-pub fn get_code_segment_selector() -> u16 {
-    let selector: u16;
-    unsafe { asm!("mov {:x}, cs", out(reg) selector, options(nomem, nostack)); }
-    selector
-}
-
-unsafe fn set_code_segment_selector(value: u16) {
-    asm!(
-        "push {0:r}",
-        "lea {0:r}, [rip + 1f]",
-        "push {0:r}",
-        "rex64 retf",
-        "1:",
-        inlateout(reg) value => _,
-        options(nomem)
-    )
-}
-
-#[allow(dead_code)]
-fn get_stack_segment_selector() -> u16 {
-    let selector: u16;
-    unsafe { asm!("mov {:x}, ss", out(reg) selector, options(nomem, nostack)); }
-    selector
-}
-
-unsafe fn invalidate_stack_segment_selector() {
-    set_stack_segment_selector(0)
-}
-
-unsafe fn set_stack_segment_selector(value: u16) {
-    asm!("mov ss, {:x}", in(reg) value, options(nomem, nostack))
-}
-
-unsafe fn set_task_state_segment_selector(value: u16) {
-    asm!("ltr {:x}", in(reg) value, options(nomem, nostack))
 }
 
 #[cfg(test)]
@@ -88,6 +52,6 @@ mod tests {
 
     #[test]
     fn invalidating_the_stack_segment_selector_on_boot() {
-        assert_eq!(0, get_stack_segment_selector())
+        assert_eq!(0, SS::get())
     }
 }
