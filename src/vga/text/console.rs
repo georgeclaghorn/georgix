@@ -17,11 +17,11 @@ lazy_static! {
 }
 
 pub fn initialize() {
-    CONSOLE.lock().clear();
+    CONSOLE.lock().clear()
 }
 
 pub fn print(args: core::fmt::Arguments) {
-    crate::arch::interrupts::suppress(|| WRITER.lock().write_fmt(args).unwrap());
+    crate::arch::interrupts::suppress(|| WRITER.lock().write_fmt(args).unwrap())
 }
 
 struct Writer {

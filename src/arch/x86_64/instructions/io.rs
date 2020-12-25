@@ -7,7 +7,7 @@ pub unsafe fn inb(port: u16) -> u8 {
 
 #[inline(always)]
 pub unsafe fn outb(port: u16, value: u8) {
-    asm!("out dx, al", in("dx") port, in("al") value, options(nomem, nostack));
+    asm!("out dx, al", in("dx") port, in("al") value, options(nomem, nostack))
 }
 
 #[inline(always)]
@@ -19,5 +19,5 @@ pub unsafe fn inl(port: u16) -> u32 {
 
 #[inline(always)]
 pub unsafe fn outl(port: u16, value: u32) {
-    asm!("out dx, eax", in("dx") port, in("eax") value, options(nomem, nostack));
+    asm!("out dx, eax", in("dx") port, in("eax") value, options(nomem, nostack))
 }

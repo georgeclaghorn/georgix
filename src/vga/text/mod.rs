@@ -26,7 +26,7 @@ impl Console {
 
     fn write_str(&mut self, string: &str, color: ColorCode) {
         for byte in string.bytes() {
-            self.write_byte(byte, color);
+            self.write_byte(byte, color)
         }
     }
 
@@ -65,7 +65,7 @@ impl Console {
     }
 
     fn put(&mut self, character: Character) {
-        self.current().write(character);
+        self.current().write(character)
     }
 
     fn current(&mut self) -> &mut Volatile<Character> {

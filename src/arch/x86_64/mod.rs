@@ -26,12 +26,12 @@ pub fn initialize() {
 
 #[inline(always)]
 pub fn park() -> ! {
-    loop { halt(); }
+    loop { halt() }
 }
 
 #[inline(always)]
 pub fn halt() {
-    unsafe { self::instructions::hlt(); }
+    unsafe { self::instructions::hlt() }
 }
 
 

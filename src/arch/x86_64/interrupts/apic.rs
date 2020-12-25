@@ -35,6 +35,6 @@ impl APIC {
     }
 
     pub fn acknowledge(&mut self) {
-        self.end_of_interrupt_register.write(0);
+        self.end_of_interrupt_register.write(0)
     }
 }

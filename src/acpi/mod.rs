@@ -17,6 +17,6 @@ mod tests {
 
     #[test]
     fn finding_the_rsdp_on_boot() {
-        assert!(RSDP.lock().is_some());
+        assert!(RSDP.lock().is_some())
     }
 }

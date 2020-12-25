@@ -31,6 +31,6 @@ impl PIC {
     }
 
     pub fn disable(&self) {
-        unsafe { self.data_port.write(0xFFu8); }
+        unsafe { self.data_port.write(0xFFu8) }
     }
 }
