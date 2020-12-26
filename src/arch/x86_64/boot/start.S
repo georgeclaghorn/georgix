@@ -56,6 +56,13 @@ _start:
     orl $0b10000011, %eax
     movl %eax, boot.page_directory_table.3 + 0xFB8
 
+    # Now we'll map the IOAPIC registers. They're at 0xFEC00000, one page before the LAPIC registers.
+
+    # Populate the 503rd entry of the second PDT. Point it at the 2 MB frame at 0xFEC00000.
+    movl $0xFEC00000, %eax
+    orl $0b10000011, %eax
+    movl %eax, boot.page_directory_table.3 + 0xFB0
+
     # Load the PML4 Table.
     movl $boot.page_map_level_4_table, %eax
     movl %eax, %cr3
