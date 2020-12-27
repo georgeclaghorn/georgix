@@ -81,12 +81,12 @@ impl<'a> Register<'a> {
         self.owner.write(self.index, data)
     }
 
-    fn set(&self, index: u8) {
-        self.write(self.read() | (1 << index))
-    }
-
     fn get(&self, index: u8) -> bool {
         self.read().get_bit(index.into())
+    }
+
+    fn set(&self, index: u8, value: bool) {
+        self.write(*self.read().set_bit(index.into(), value))
     }
 }
 
@@ -146,7 +146,7 @@ impl<'a> Redirection<'a> {
     }
 
     fn disable(&self) {
-        self.lower.set(16);
+        self.lower.set(16, true);
         self.upper.write(0);
     }
 
