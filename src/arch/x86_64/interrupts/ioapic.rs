@@ -31,7 +31,7 @@ impl IOAPIC {
         Redirections::new(self)
     }
 
-    fn redirection_at(&self, index: u8) -> Option<Redirection> {
+    pub fn redirection_at(&self, index: u8) -> Option<Redirection> {
         self.redirections().get(index)
     }
 
@@ -81,8 +81,12 @@ impl<'a> Register<'a> {
         self.owner.write(self.index, data)
     }
 
-    fn set(&self, bit: u8) {
-        self.write(self.read() | (1 << bit))
+    fn set(&self, index: u8) {
+        self.write(self.read() | (1 << index))
+    }
+
+    fn get(&self, index: u8) -> bool {
+        self.read().get_bit(index.into())
     }
 }
 
@@ -122,7 +126,7 @@ impl<'a> Iterator for Redirections<'a> {
     }
 }
 
-struct Redirection<'a> {
+pub struct Redirection<'a> {
     lower: Register<'a>,
     upper: Register<'a>
 }
@@ -144,5 +148,17 @@ impl<'a> Redirection<'a> {
     fn disable(&self) {
         self.lower.set(16);
         self.upper.write(0);
+    }
+
+    pub fn is_enabled(&self) -> bool {
+        !self.is_disabled()
+    }
+
+    pub fn is_disabled(&self) -> bool {
+        self.lower.get(16)
+    }
+
+    pub fn vector(&self) -> u8 {
+        self.lower.read().get_bits(0..=7) as u8
     }
 }

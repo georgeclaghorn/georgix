@@ -89,3 +89,15 @@ pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
 fn acknowledge() {
     LAPIC.lock().acknowledge()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn enabling_keyboard_interrupts() {
+        let redirection = IOAPIC.redirection_at(1).unwrap();
+        assert!(redirection.is_enabled());
+        assert_eq!(Vector::Keyboard as u8, redirection.vector());
+    }
+}
