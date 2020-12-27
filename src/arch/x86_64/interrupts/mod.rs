@@ -45,16 +45,17 @@ lazy_static! {
     );
 
     static ref LAPIC: Mutex<&'static mut APIC> = Mutex::new(unsafe { APIC::get() });
-    static ref IOAPIC: Mutex<&'static mut ioapic::IOAPIC> = Mutex::new(unsafe { ioapic::IOAPIC::get() });
+    static ref IOAPIC: ioapic::IOAPIC = unsafe { ioapic::IOAPIC::get() };
 }
 
 pub(super) fn initialize() {
     INTERRUPT_DESCRIPTOR_TABLE.load();
+
     PICS.lock().disable();
     LAPIC.lock().initialize();
 
-    IOAPIC.lock().initialize();
-    IOAPIC.lock().enable(1, Vector::Keyboard);
+    IOAPIC.initialize();
+    IOAPIC.enable(1, Vector::Keyboard);
 }
 
 pub(super) fn enable() {
