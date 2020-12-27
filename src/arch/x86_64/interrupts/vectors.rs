@@ -1,18 +1,11 @@
-#[repr(usize)]
+#[repr(u8)]
 pub enum Vector {
-    Timer = 32
+    Timer = 32,
+    Keyboard
 }
 
-impl Into<usize> for Vector {
-    fn into(self) -> usize {
-        self as usize
-    }
-}
-
-impl core::ops::BitOr<Vector> for u32 {
-    type Output = u32;
-
-    fn bitor(self, vector: Vector) -> u32 {
-        self | vector as u32
+impl Into<u8> for Vector {
+    fn into(self) -> u8 {
+        self as u8
     }
 }

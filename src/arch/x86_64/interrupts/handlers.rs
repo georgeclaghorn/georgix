@@ -27,3 +27,8 @@ pub extern "x86-interrupt" fn timer(_stack_frame: &InterruptStackFrame) {
     print!(".");
     acknowledge();
 }
+
+pub extern "x86-interrupt" fn keyboard(_stack_frame: &InterruptStackFrame) {
+    print!("*");
+    acknowledge();
+}

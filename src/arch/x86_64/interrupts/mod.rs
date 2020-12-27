@@ -12,6 +12,8 @@ use pic::{ChainedPIC, PIC};
 mod apic;
 use apic::APIC;
 
+mod ioapic;
+
 use lazy_static::lazy_static;
 use spin::Mutex;
 
@@ -30,6 +32,7 @@ lazy_static! {
         table.page_fault.handle_with(self::handlers::page_fault);
 
         table[Vector::Timer].handle_with(self::handlers::timer);
+        table[Vector::Keyboard].handle_with(self::handlers::keyboard);
 
         table
     };
@@ -42,12 +45,16 @@ lazy_static! {
     );
 
     static ref LAPIC: Mutex<&'static mut APIC> = Mutex::new(unsafe { APIC::get() });
+    static ref IOAPIC: Mutex<&'static mut ioapic::IOAPIC> = Mutex::new(unsafe { ioapic::IOAPIC::get() });
 }
 
 pub(super) fn initialize() {
     INTERRUPT_DESCRIPTOR_TABLE.load();
     PICS.lock().disable();
     LAPIC.lock().initialize();
+
+    IOAPIC.lock().initialize();
+    IOAPIC.lock().enable(1, Vector::Keyboard);
 }
 
 pub(super) fn enable() {

@@ -19,7 +19,7 @@ impl APIC {
     // underlying data. It is the caller’s responsibility to ensure no other code writes to the
     // APIC concurrently.
     pub unsafe fn get() -> &'static mut APIC {
-        &mut *(APIC::base() as *mut APIC)
+        &mut *(APIC::base() as *mut _)
     }
 
     fn base() -> u64 {
@@ -28,7 +28,7 @@ impl APIC {
     }
 
     pub fn initialize(&mut self) {
-        self.timer_vector_register.write(0x20000 | Vector::Timer);
+        self.timer_vector_register.write(0x20000 | Vector::Timer as u32);
         self.timer_initial_count_register.write(10000000);
         self.timer_divide_configuration_register.write(0xB);
         self.end_of_interrupt_register.write(0);

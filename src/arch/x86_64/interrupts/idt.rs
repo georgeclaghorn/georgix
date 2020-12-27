@@ -90,10 +90,10 @@ impl InterruptDescriptorTable {
     }
 }
 
-impl Index<usize> for InterruptDescriptorTable {
+impl Index<u8> for InterruptDescriptorTable {
     type Output = Entry<Handler>;
 
-    fn index(&self, index: usize) -> &Self::Output {
+    fn index(&self, index: u8) -> &Self::Output {
         match index {
             0  => &self.divide_error,
             1  => &self.debug,
@@ -116,15 +116,13 @@ impl Index<usize> for InterruptDescriptorTable {
 
             i @ 18 => panic!("entry {} is a diverging exception", i),
 
-            i @ 32..=255 => &self.other[i - 32],
-
-            i => panic!("no entry with index {}", i)
+            i @ 32..=255 => &self.other[i as usize - 32]
         }
     }
 }
 
-impl IndexMut<usize> for InterruptDescriptorTable {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+impl IndexMut<u8> for InterruptDescriptorTable {
+    fn index_mut(&mut self, index: u8) -> &mut Self::Output {
         match index {
             0  => &mut self.divide_error,
             1  => &mut self.debug,
@@ -136,6 +134,8 @@ impl IndexMut<usize> for InterruptDescriptorTable {
             7  => &mut self.device_not_available,
             9  => &mut self.coprocessor_segment_overrun,
             16 => &mut self.x87_floating_point,
+            19 => &mut self.simd_floating_point,
+            20 => &mut self.virtualization,
 
             i @ 8 | i @ 10..=14 | i @ 17 | i @ 30 => {
                 panic!("entry {} is an exception with error code", i)
@@ -145,9 +145,7 @@ impl IndexMut<usize> for InterruptDescriptorTable {
 
             i @ 18 => panic!("entry {} is a diverging exception", i),
 
-            i @ 32..=255 => &mut self.other[i - 32],
-
-            i => panic!("no entry with index {}", i)
+            i @ 32..=255 => &mut self.other[i as usize - 32]
         }
     }
 }
@@ -156,13 +154,13 @@ impl Index<Vector> for InterruptDescriptorTable {
     type Output = Entry<Handler>;
 
     fn index(&self, index: Vector) -> &Self::Output {
-        &self[index.into(): usize]
+        &self[index as u8]
     }
 }
 
 impl IndexMut<Vector> for InterruptDescriptorTable {
     fn index_mut(&mut self, index: Vector) -> &mut Self::Output {
-        &mut self[index.into(): usize]
+        &mut self[index as u8]
     }
 }
 
