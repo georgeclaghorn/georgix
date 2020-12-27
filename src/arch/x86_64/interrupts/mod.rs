@@ -58,11 +58,11 @@ pub(super) fn initialize() {
 }
 
 pub(super) fn enable() {
-    unsafe { super::instructions::sti(); }
+    unsafe { super::instructions::sti() }
 }
 
 pub(super) fn disable() {
-    unsafe { super::instructions::cli(); }
+    unsafe { super::instructions::cli() }
 }
 
 pub(super) fn enabled() -> bool {
@@ -86,5 +86,5 @@ pub fn suppress<F, R>(f: F) -> R where F: FnOnce() -> R {
 }
 
 fn acknowledge() {
-    LAPIC.lock().acknowledge();
+    LAPIC.lock().acknowledge()
 }
