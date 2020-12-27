@@ -1,4 +1,7 @@
 use spin::Mutex;
+use bit_field::BitField;
+use tap::tap::Tap;
+
 use super::vectors::Vector;
 
 pub struct IOAPIC {
@@ -13,17 +16,23 @@ impl IOAPIC {
     }
 
     pub fn initialize(&self) {
-        for index in 0..=23 {
-            self.redirection_at(index).disable()
+        for redirection in self.redirections() {
+            redirection.disable()
         }
     }
 
     pub fn enable(&self, index: u8, vector: Vector) {
-        self.redirection_at(index).enable(vector)
+        if let Some(redirection) = self.redirection_at(index) {
+            redirection.enable(vector)
+        }
     }
 
-    fn redirection_at(&self, index: u8) -> Redirection {
-        Redirection { owner: self, index }
+    fn redirections(&self) -> Redirections {
+        Redirections::new(self)
+    }
+
+    fn redirection_at(&self, index: u8) -> Option<Redirection> {
+        self.redirections().get(index)
     }
 
     fn register_at(&self, index: u8) -> Register {
@@ -74,6 +83,42 @@ impl<'a> Register<'a> {
 
     fn set(&self, bit: u8) {
         self.write(self.read() | (1 << bit))
+    }
+}
+
+struct Redirections<'a> {
+    owner: &'a IOAPIC,
+    count: u8,
+    index: u8
+}
+
+impl<'a> Redirections<'a> {
+    fn new(owner: &'a IOAPIC) -> Redirections {
+        Redirections {
+            owner,
+            count: owner.read(0x01).get_bits(16..=23) as u8,
+            index: 0
+        }
+    }
+
+    fn get(&self, index: u8) -> Option<Redirection<'a>> {
+        if index < self.count {
+            Some(Redirection { owner: self.owner, index })
+        } else {
+            None
+        }
+    }
+}
+
+impl<'a> Iterator for Redirections<'a> {
+    type Item = Redirection<'a>;
+
+    fn next(&mut self) -> Option<Redirection<'a>> {
+        self.get(self.index).tap(|redirection| {
+            if redirection.is_some() {
+                self.index += 1
+            }
+        })
     }
 }
 
