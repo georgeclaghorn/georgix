@@ -103,7 +103,7 @@ impl<'a> Redirections<'a> {
 
     fn get(&self, index: u8) -> Option<Redirection<'a>> {
         if index < self.count {
-            Some(Redirection { owner: self.owner, index })
+            Some(Redirection::new(self.owner, index))
         } else {
             None
         }
@@ -123,27 +123,26 @@ impl<'a> Iterator for Redirections<'a> {
 }
 
 struct Redirection<'a> {
-    owner: &'a IOAPIC,
-    index: u8
+    lower: Register<'a>,
+    upper: Register<'a>
 }
 
 impl<'a> Redirection<'a> {
     const BASE: u8 = 0x10;
 
+    fn new(owner: &'a IOAPIC, index: u8) -> Redirection<'a> {
+        Redirection {
+            lower: owner.register_at(Redirection::BASE + 2 * index),
+            upper: owner.register_at(Redirection::BASE + 2 * index + 1)
+        }
+    }
+
     fn enable(&self, vector: Vector) {
-        self.to_lower().write(vector as u32)
+        self.lower.write(vector as u32)
     }
 
     fn disable(&self) {
-        self.to_lower().set(16);
-        self.to_upper().write(0);
-    }
-
-    fn to_lower(&self) -> Register {
-        self.owner.register_at(Redirection::BASE + 2 * self.index)
-    }
-
-    fn to_upper(&self) -> Register {
-        self.owner.register_at(Redirection::BASE + 2 * self.index + 1)
+        self.lower.set(16);
+        self.upper.write(0);
     }
 }
