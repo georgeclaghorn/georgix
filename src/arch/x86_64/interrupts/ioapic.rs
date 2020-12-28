@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use spin::Mutex;
 use bit_field::BitField;
 use tap::tap::Tap;
