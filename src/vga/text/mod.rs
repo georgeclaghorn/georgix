@@ -77,7 +77,7 @@ impl Console {
     }
 
     fn advance(&mut self) {
-        self.column += 1;
+        self.column += 1
     }
 
     fn clear(&mut self) {

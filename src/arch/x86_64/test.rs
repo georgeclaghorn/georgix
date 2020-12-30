@@ -11,11 +11,11 @@ pub mod console {
     }
 
     pub fn initialize() {
-        COM1.lock().init();
+        COM1.lock().init()
     }
 
     pub fn print(args: core::fmt::Arguments) {
-        crate::arch::x86_64::interrupts::suppress(|| COM1.lock().write_fmt(args).unwrap());
+        crate::arch::x86_64::interrupts::suppress(|| COM1.lock().write_fmt(args).unwrap())
     }
 }
 

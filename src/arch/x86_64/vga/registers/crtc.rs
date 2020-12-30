@@ -47,7 +47,7 @@ impl<'a> Register<'a> {
     }
 
     pub fn set(&self, index: u8) {
-        self.write(self.read() | (1 << index));
+        self.write(self.read() | (1 << index))
     }
 }
 

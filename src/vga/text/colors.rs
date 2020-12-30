@@ -39,7 +39,7 @@ mod tests {
         assert_eq!(
             ColorCode::new(Color::LightGray, Color::Black),
             ColorCode(7)
-        );
+        )
     }
 
     #[test]
@@ -47,6 +47,6 @@ mod tests {
         assert_eq!(
             ColorCode::new(Color::White, Color::Green),
             ColorCode(47)
-        );
+        )
     }
 }
