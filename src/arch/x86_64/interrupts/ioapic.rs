@@ -161,6 +161,6 @@ impl<'a> Redirection<'a> {
     }
 
     pub fn vector(&self) -> u8 {
-        self.lower.read().get_bits(0..=7) as u8
+        self.lower.read() as u8
     }
 }
