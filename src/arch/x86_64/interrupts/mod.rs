@@ -37,12 +37,11 @@ lazy_static! {
         table
     };
 
-    static ref PICS: Mutex<ChainedPIC> = Mutex::new(
+    static ref PICS: ChainedPIC =
         ChainedPIC::new(
             PIC::new(0x20, 0x21),
             PIC::new(0xA0, 0xA1)
-        )
-    );
+        );
 
     static ref LAPIC: Mutex<&'static mut APIC> = Mutex::new(unsafe { APIC::get() });
     static ref IOAPIC: ioapic::IOAPIC = unsafe { ioapic::IOAPIC::get() };
@@ -51,7 +50,7 @@ lazy_static! {
 pub(super) fn initialize() {
     INTERRUPT_DESCRIPTOR_TABLE.load();
 
-    PICS.lock().disable();
+    PICS.disable();
     LAPIC.lock().initialize();
 
     IOAPIC.initialize();
