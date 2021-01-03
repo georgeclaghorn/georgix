@@ -83,12 +83,16 @@ impl<'a> Register<'a> {
         self.owner.write(self.index, data)
     }
 
-    fn get(&self, index: u8) -> bool {
+    fn get_bit(&self, index: u8) -> bool {
         self.read().get_bit(index.into())
     }
 
-    fn set(&self, index: u8, value: bool) {
+    fn set_bit(&self, index: u8, value: bool) {
         self.write(*self.read().set_bit(index.into(), value))
+    }
+
+    fn get_bits<T>(&self, range: T) -> u32 where T: core::ops::RangeBounds<usize> {
+        self.read().get_bits(range)
     }
 }
 
@@ -102,7 +106,7 @@ impl<'a> Redirections<'a> {
     fn new(owner: &IOAPIC) -> Redirections {
         Redirections {
             owner,
-            count: owner.read(0x01).get_bits(16..=23) as u8,
+            count: owner.register_at(0x01).get_bits(16..=23) as u8,
             index: 0
         }
     }
@@ -148,7 +152,7 @@ impl<'a> Redirection<'a> {
     }
 
     fn disable(&self) {
-        self.lower.set(16, true);
+        self.lower.set_bit(16, true);
         self.upper.write(0);
     }
 
@@ -157,7 +161,7 @@ impl<'a> Redirection<'a> {
     }
 
     pub fn is_disabled(&self) -> bool {
-        self.lower.get(16)
+        self.lower.get_bit(16)
     }
 
     pub fn vector(&self) -> u8 {
