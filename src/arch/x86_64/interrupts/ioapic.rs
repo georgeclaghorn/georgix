@@ -99,7 +99,7 @@ struct Redirections<'a> {
 }
 
 impl<'a> Redirections<'a> {
-    fn new(owner: &'a IOAPIC) -> Redirections {
+    fn new(owner: &IOAPIC) -> Redirections {
         Redirections {
             owner,
             count: owner.read(0x01).get_bits(16..=23) as u8,
@@ -136,7 +136,7 @@ pub struct Redirection<'a> {
 impl<'a> Redirection<'a> {
     const BASE: u8 = 0x10;
 
-    fn new(owner: &'a IOAPIC, index: u8) -> Redirection<'a> {
+    fn new(owner: &IOAPIC, index: u8) -> Redirection {
         Redirection {
             lower: owner.register_at(Redirection::BASE + 2 * index),
             upper: owner.register_at(Redirection::BASE + 2 * index + 1)
