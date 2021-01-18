@@ -5,8 +5,17 @@
 .code32
 
 _start:
-    # We'll need a stack eventually, so set one up. The stack grows down from a high address.
+    # We'll need a stack next, so set one up. The stack grows down from a high address.
     movl $boot.stack.high, %esp
+
+    # The bootloader provides:
+    #
+    # * A magic number in EAX
+    # * The physical address of the boot information record in EBX
+    #
+    # We clobber EAX and EBX, so save these values on the stack to pass to the Rust entrypoint later.
+    pushl %ebx
+    pushl %eax
 
     # The bootloader leaves the CPU in 32-bit protected mode. We want to switch into 64-bit long
     # mode before jumping into Rust. This requires that we activate paging.
@@ -101,6 +110,11 @@ _start:
     # code segment the bootloader provided to our own, defined in the GDT below. Our code segment's
     # descriptor has its L bit set to indicate it contains 64-bit code, so jumping into it has the
     # effect of entering 64-bit mode.
+    #
+    # Pass the bootloader magic number and the address of the boot information record as parameters.
+    # Rust declares main to use the C calling convention, so the first two parameters go in EDI and ESI.
+    popl %edi
+    popl %esi
     ljmp $boot.global_descriptor_table.code, $main
 
     # The kernel shouldn't return, but if it does for some reason, park.

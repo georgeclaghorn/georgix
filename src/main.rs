@@ -16,7 +16,7 @@ use arch::park;
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 #[no_mangle]
-pub extern "C" fn main() -> ! {
+pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
     boot::console::initialize();
 
     println!("Georgix v{}", VERSION);
