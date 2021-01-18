@@ -9,17 +9,33 @@ mod arch;
 mod boot;
 mod acpi;
 mod vga;
+mod util;
 mod test;
 
 use arch::park;
+use boot::Info;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 #[no_mangle]
-pub extern "C" fn main(_magic: u32, _info: *const u8) -> ! {
+pub extern "C" fn main(magic: u32, info: &'static Info) -> ! {
     boot::console::initialize();
 
+    if magic != 0x36D76289 {
+        panic!("Georgix requires a Multiboot 2-compliant bootloader");
+    }
+
+    boot::info::set(info);
+
     println!("Georgix v{}", VERSION);
+
+    if let Some(map) = info.memory_map() {
+        println!("Multiboot 2 memory map:");
+
+        for region in map.regions() {
+            println!("{:?}", region);
+        }
+    }
 
     arch::initialize();
 

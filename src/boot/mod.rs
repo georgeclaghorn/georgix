@@ -1,3 +1,6 @@
+pub mod info;
+pub use info::Info;
+
 #[cfg(not(test))]
 pub use crate::vga::text::console;
 
