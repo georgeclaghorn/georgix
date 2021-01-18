@@ -24,7 +24,7 @@ pub extern "x86-interrupt" fn page_fault(stack_frame: &InterruptStackFrame, erro
 }
 
 pub extern "x86-interrupt" fn timer(_stack_frame: &InterruptStackFrame) {
-    print!(".");
+    // print!(".");
     acknowledge();
 }
 
