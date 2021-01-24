@@ -17,6 +17,12 @@ impl<'a> From<&'a MemoryMapTag> for MemoryMap<'a> {
     }
 }
 
+impl<'a> core::fmt::Display for MemoryMap<'a> {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        self.regions().fold(Ok(()), |result, region| result.and_then(|_| writeln!(formatter, "{}", region)))
+    }
+}
+
 use core::marker::PhantomData;
 
 pub struct Regions<'a> {
@@ -86,19 +92,25 @@ impl Region {
     pub fn kind(&self) -> Kind {
         match self.kind {
             1 => Kind::Available,
-            3 => Kind::ACPI,
-            4 => Kind::PreservedOnHibernate,
+            3 => Kind::Reclaimable,
+            4 => Kind::Nonvolatile,
             5 => Kind::Defective,
             _ => Kind::Reserved
         }
     }
 }
 
+impl core::fmt::Display for Region {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        write!(formatter, "[{:#016x}-{:#016x}] {}", self.starts_at(), self.ends_at(), self.kind())
+    }
+}
+
 impl core::fmt::Debug for Region {
     fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         formatter.debug_struct("Region")
-            .field("starts_at", &format_args!("0x{:x}", self.starts_at()))
-            .field("ends_at", &format_args!("0x{:x}", self.ends_at()))
+            .field("starts_at", &format_args!("{:#x}", self.starts_at()))
+            .field("ends_at", &format_args!("{:#x}", self.ends_at()))
             .field("length", &self.length())
             .field("kind", &self.kind())
             .finish()
@@ -109,7 +121,25 @@ impl core::fmt::Debug for Region {
 pub enum Kind {
     Reserved,
     Available,
-    ACPI,
-    PreservedOnHibernate,
+    Reclaimable,
+    Nonvolatile,
     Defective
+}
+
+impl Kind {
+    fn to_str(&self) -> &str {
+        match self {
+            Kind::Reserved    => "Reserved",
+            Kind::Available   => "Available",
+            Kind::Reclaimable => "Reclaimable (ACPI)",
+            Kind::Nonvolatile => "Non-volatile (ACPI)",
+            Kind::Defective   => "Defective"
+        }
+    }
+}
+
+impl core::fmt::Display for Kind {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        write!(formatter, "{}", self.to_str())
+    }
 }

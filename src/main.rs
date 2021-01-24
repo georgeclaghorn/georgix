@@ -30,11 +30,7 @@ pub extern "C" fn main(magic: u32, info: &'static Info) -> ! {
     println!("Georgix v{}", VERSION);
 
     if let Some(map) = info.memory_map() {
-        println!("Multiboot 2 memory map:");
-
-        for region in map.regions() {
-            println!("{:?}", region);
-        }
+        print!("Memory map:\n{}", map);
     }
 
     arch::initialize();
