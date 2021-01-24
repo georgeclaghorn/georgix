@@ -31,6 +31,8 @@ pub extern "C" fn main(magic: u32, info: &'static Info) -> ! {
 
     if let Some(map) = info.memory_map() {
         print!("Memory map:\n{}", map);
+    } else {
+        panic!("Memory map not found");
     }
 
     arch::initialize();
