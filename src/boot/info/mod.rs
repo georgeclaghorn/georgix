@@ -7,16 +7,16 @@ use tags::*;
 mod mem;
 pub use mem::MemoryMap;
 
-use spin::Mutex;
+use spin::RwLock;
 
-static INFO: Mutex<Option<&'static Info>> = Mutex::new(None);
+static INFO: RwLock<Option<&'static Info>> = RwLock::new(None);
 
 pub fn set(info: &'static Info) {
-    INFO.lock().replace(info);
+    INFO.write().replace(info);
 }
 
 pub fn get() -> Option<&'static Info> {
-    *INFO.lock()
+    *INFO.read()
 }
 
 #[repr(C)]
