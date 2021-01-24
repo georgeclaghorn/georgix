@@ -9,6 +9,10 @@ impl<'a> MemoryMap<'a> {
     pub fn regions(&self) -> Regions {
         Regions::new(self.tag)
     }
+
+    pub fn maximum_address(&self) -> Option<usize> {
+        self.regions().map(|region| region.ends_at()).max()
+    }
 }
 
 impl<'a> From<&'a MemoryMapTag> for MemoryMap<'a> {
