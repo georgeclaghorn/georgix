@@ -18,6 +18,7 @@ impl Table {
 
 use core::marker::PhantomData;
 use core::convert::TryInto;
+use crate::util::alignment::align_up;
 
 pub struct Tags<'a> {
     current: *const Tag,
@@ -42,10 +43,13 @@ impl<'a> Tags<'a> {
             tag => Some(tag)
         }
     }
+
+    fn advance(&self, offset: usize) -> *const Tag {
+        align_up(self.current as usize + offset, 8) as *const Tag
+    }
 }
 
 use tap::tap::Tap;
-use crate::util::alignment::align_up;
 
 impl<'a> Iterator for Tags<'a> {
     type Item = &'a Tag;
@@ -53,7 +57,7 @@ impl<'a> Iterator for Tags<'a> {
     fn next(&mut self) -> Option<&'a Tag> {
         unsafe { self.current() }.tap(|tag| {
             if let Some(tag) = tag {
-                self.current = align_up(self.current as usize + tag.size as usize, 8) as *const Tag
+                self.current = self.advance(tag.size as usize)
             }
         })
     }
