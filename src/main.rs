@@ -6,26 +6,29 @@
 #![reexport_test_harness_main = "test"]
 
 mod arch;
-mod boot;
+mod multiboot;
 mod acpi;
 mod vga;
 mod util;
 mod test;
 
 use arch::park;
-use boot::Info;
+
+#[cfg(not(test))]
+pub use vga::text::console;
+
+#[cfg(test)]
+pub use arch::test::console;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 #[no_mangle]
-pub extern "C" fn main(magic: u32, info: &'static Info) -> ! {
-    boot::console::initialize();
+pub extern "C" fn main(magic: multiboot::Magic, info: &'static multiboot::Info) -> ! {
+    // Initialize the console early for printing and panic handling.
+    console::initialize();
 
-    if magic != 0x36D76289 {
-        panic!("Georgix requires a Multiboot 2-compliant bootloader");
-    }
-
-    boot::info::set(info);
+    multiboot::magic::validate(magic);
+    multiboot::info::set(info);
 
     println!("Georgix v{}", VERSION);
 
@@ -62,5 +65,5 @@ macro_rules! println {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::boot::console::print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::console::print(format_args!($($arg)*)));
 }
