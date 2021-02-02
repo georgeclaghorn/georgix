@@ -21,7 +21,7 @@ lazy_static! {
         let mut task_state_segment = TaskStateSegment::new();
 
         task_state_segment.interrupt_stack_table[DOUBLE_FAULT_STACK_INDEX as usize] = {
-            const STACK_SIZE: usize = 4096;
+            const STACK_SIZE: usize = 16382;
             const STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
             VirtualAddress::from(&STACK) + STACK_SIZE
