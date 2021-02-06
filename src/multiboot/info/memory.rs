@@ -114,7 +114,7 @@ impl Region {
 
 impl core::fmt::Display for Region {
     fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        write!(formatter, "[{:#016x}-{:#016x}] {}", self.starts_at(), self.ends_at(), self.kind())
+        write!(formatter, "[{:#16x} - {:#16x}] {}", self.starts_at(), self.ends_at(), self.kind())
     }
 }
 
