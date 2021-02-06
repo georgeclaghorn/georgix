@@ -1,9 +1,8 @@
 mod gdt;
 use gdt::{GlobalDescriptorTable, Selector, Descriptor};
 
-use super::multitasking::TaskStateSegment;
-use super::addresses::VirtualAddress;
-use super::registers::*;
+use crate::arch::x86_64::{
+    multitasking::TaskStateSegment, addresses::VirtualAddress, registers::* };
 
 use lazy_static::lazy_static;
 

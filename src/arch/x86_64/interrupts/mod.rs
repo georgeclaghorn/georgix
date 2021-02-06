@@ -25,7 +25,7 @@ lazy_static! {
 
         unsafe {
             table.double_fault.handle_with(self::handlers::double_fault)
-                .on_stack_with_index(super::segmentation::DOUBLE_FAULT_STACK_INDEX);
+                .on_stack_with_index(super::memory::segmentation::DOUBLE_FAULT_STACK_INDEX);
         }
 
         table.general_protection_fault.handle_with(self::handlers::general_protection_fault);

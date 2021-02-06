@@ -13,12 +13,12 @@ mod boot;
 mod io;
 mod multitasking;
 mod registers;
-mod segmentation;
+mod memory;
 
 use crate::acpi;
 
 pub fn initialize() {
-    segmentation::initialize();
+    memory::initialize();
     acpi::initialize();
     interrupts::initialize();
     interrupts::enable();
