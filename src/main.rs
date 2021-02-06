@@ -34,10 +34,6 @@ pub extern "C" fn main(magic: multiboot::Magic, info: &'static multiboot::Info) 
 
     if let Some(map) = info.memory_map() {
         print!("Memory map:\n{}", map);
-
-        if let Some(address) = map.maximum_address() {
-            println!("Maximum physical address: {:#x}", address);
-        }
     } else {
         panic!("Memory map not found");
     }

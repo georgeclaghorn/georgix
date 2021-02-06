@@ -23,7 +23,15 @@ impl<'a> From<&'a MemoryMapTag> for MemoryMap<'a> {
 
 impl<'a> core::fmt::Display for MemoryMap<'a> {
     fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        self.regions().fold(Ok(()), |result, region| result.and_then(|_| writeln!(formatter, "{}", region)))
+        for region in self.regions() {
+            writeln!(formatter, "{}", region)?;
+        }
+
+        if let Some(address) = self.maximum_address() {
+            writeln!(formatter, "Maximum physical address: {:#x}", address)
+        } else {
+            Ok(())
+        }
     }
 }
 
