@@ -30,7 +30,7 @@ macro_rules! try_from_impl_for {
     }
 }
 
-use super::mem::Region;
+use super::memory::Region;
 
 #[repr(C)]
 #[derive(Debug)]
