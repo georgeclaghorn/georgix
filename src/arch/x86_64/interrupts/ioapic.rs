@@ -48,6 +48,10 @@ impl IOAPIC {
     fn write(&self, index: u8, data: u32) {
         self.registers.lock().write(index, data)
     }
+
+    fn update<F>(&self, index: u8, change: F) where F: FnOnce(u32) -> u32 {
+        self.registers.lock().update(index, change)
+    }
 }
 
 #[repr(C)]
@@ -67,6 +71,11 @@ impl Registers {
         self.index.write(index as u32);
         self.data.write(data);
     }
+
+    fn update<F>(&mut self, index: u8, change: F) where F: FnOnce(u32) -> u32 {
+        let data = self.read(index);
+        self.write(index, change(data));
+    }
 }
 
 struct Register<'a> {
@@ -83,12 +92,16 @@ impl<'a> Register<'a> {
         self.owner.write(self.index, data)
     }
 
+    fn update<F>(&self, change: F) where F: FnOnce(u32) -> u32 {
+        self.owner.update(self.index, change)
+    }
+
     fn get_bit(&self, index: u8) -> bool {
         self.read().get_bit(index.into())
     }
 
     fn set_bit(&self, index: u8, value: bool) {
-        self.write(*self.read().set_bit(index.into(), value))
+        self.update(|mut data| *data.set_bit(index.into(), value))
     }
 
     fn get_bits<T>(&self, range: T) -> u32 where T: core::ops::RangeBounds<usize> {
