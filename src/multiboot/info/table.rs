@@ -39,7 +39,7 @@ impl<'a> Tags<'a> {
 
     unsafe fn current(&self) -> Option<&'a Tag> {
         match &*self.current {
-            Tag { kind: Kind::End, size: _ } => None,
+            Tag { kind: Kind::End, .. } => None,
             tag => Some(tag)
         }
     }
