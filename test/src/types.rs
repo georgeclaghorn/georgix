@@ -8,7 +8,9 @@ pub struct TestDesc {
     pub ignore: bool,
     pub name: StaticTestName,
     pub should_panic: ShouldPanic,
-    pub test_type: TestType
+    pub test_type: TestType,
+    pub compile_fail: bool,
+    pub no_run: bool
 }
 
 pub struct StaticTestName(pub &'static str);
