@@ -114,6 +114,13 @@ _start:
     #
     # Pass the bootloader magic number and the address of the boot information record as parameters.
     # Rust declares main to use the C calling convention, so the first two parameters go in EDI and ESI.
+    #
+    # LLVM doesn't support absolute far jump syntax, perhaps because it's a vestige of the outdated
+    # segmented memory model. If it did, the far jump would be as simple as this:
+    #
+    #   jmp boot.global_descriptor_table.code:main
+    #
+    # We work around this omission with retf.
     pop edi
     pop esi
 
