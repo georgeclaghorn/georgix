@@ -1,6 +1,7 @@
 #![cfg(target_arch = "x86_64")]
 
 pub mod vga;
+pub mod memory;
 pub mod interrupts;
 
 pub mod test;
@@ -8,12 +9,10 @@ pub mod test;
 mod instructions;
 use instructions::flags;
 
-mod addresses;
 mod boot;
 mod io;
 mod multitasking;
 mod registers;
-mod memory;
 
 use crate::acpi;
 

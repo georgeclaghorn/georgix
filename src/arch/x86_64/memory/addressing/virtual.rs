@@ -11,11 +11,11 @@ impl VirtualAddress {
         VirtualAddress::try_new(address).expect("got non-canonical virtual address")
     }
 
-    pub fn try_new(address: u64) -> Result<VirtualAddress, InvalidVirtualAddress> {
+    pub fn try_new(address: u64) -> Result<VirtualAddress, ()> {
         match address.get_bits(47..64) {
             0 | 0x1ffff => Ok(VirtualAddress(address)),
             1 => Ok(VirtualAddress::truncate(address)),
-            _ => Err(InvalidVirtualAddress(address))
+            _ => Err(())
         }
     }
 
@@ -62,15 +62,6 @@ impl core::fmt::Debug for VirtualAddress {
     }
 }
 
-#[derive(PartialEq)]
-pub struct InvalidVirtualAddress(u64);
-
-impl core::fmt::Debug for InvalidVirtualAddress {
-    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-        write!(formatter, "InvalidVirtualAddress({:#x})", self.0)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -94,8 +85,8 @@ mod tests {
     #[test]
     fn fallibly_constructing_a_noncanonical_virtual_address() {
         assert_eq!(
-            InvalidVirtualAddress(0xc00000fee00000),
-            VirtualAddress::try_new(0xc00000fee00000).expect_err("expected InvalidVirtualAddress error")
+            Err(()),
+            VirtualAddress::try_new(0xc00000fee00000)
         )
     }
 

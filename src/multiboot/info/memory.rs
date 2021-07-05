@@ -1,4 +1,5 @@
 use super::tags::MemoryMapTag;
+use crate::memory::PhysicalAddress;
 
 #[derive(Debug)]
 pub struct MemoryMap<'a> {
@@ -10,7 +11,7 @@ impl<'a> MemoryMap<'a> {
         Regions::new(self.tag)
     }
 
-    pub fn maximum_address(&self) -> Option<usize> {
+    pub fn maximum_address(&self) -> Option<PhysicalAddress> {
         self.regions().map(|region| region.ends_at()).max()
     }
 }
@@ -89,11 +90,11 @@ pub struct Region {
 }
 
 impl Region {
-    pub fn starts_at(&self) -> usize {
-        self.base as usize
+    pub fn starts_at(&self) -> PhysicalAddress {
+        PhysicalAddress::new(self.base)
     }
 
-    pub fn ends_at(&self) -> usize {
+    pub fn ends_at(&self) -> PhysicalAddress {
         self.starts_at() + self.length()
     }
 
@@ -155,3 +156,5 @@ impl core::fmt::Display for Kind {
         write!(formatter, "{}", self.to_str())
     }
 }
+
+pub use Kind::*;

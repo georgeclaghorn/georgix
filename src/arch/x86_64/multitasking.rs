@@ -1,4 +1,4 @@
-use super::addresses::VirtualAddress;
+use super::memory::VirtualAddress;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]

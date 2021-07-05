@@ -1,5 +1,8 @@
-pub mod segmentation;
+mod addressing;
+pub(super) mod segmentation;
 
-pub fn initialize() {
+pub use addressing::{PhysicalAddress, VirtualAddress};
+
+pub(super) fn initialize() {
     segmentation::initialize();
 }

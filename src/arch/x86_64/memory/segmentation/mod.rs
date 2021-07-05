@@ -2,7 +2,7 @@ mod gdt;
 use gdt::{GlobalDescriptorTable, Selector, Descriptor};
 
 use crate::arch::x86_64::{
-    multitasking::TaskStateSegment, addresses::VirtualAddress, registers::* };
+    multitasking::TaskStateSegment, memory::VirtualAddress, registers::* };
 
 use lazy_static::lazy_static;
 

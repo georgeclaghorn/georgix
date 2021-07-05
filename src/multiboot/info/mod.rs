@@ -4,8 +4,8 @@ use table::{Table, Tags};
 mod tags;
 use tags::*;
 
-mod memory;
-pub use memory::MemoryMap;
+pub mod memory;
+use memory::MemoryMap;
 
 use spin::RwLock;
 

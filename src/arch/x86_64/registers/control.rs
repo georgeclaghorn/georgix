@@ -1,4 +1,4 @@
-use crate::arch::x86_64::addresses::VirtualAddress;
+use crate::arch::x86_64::memory::VirtualAddress;
 
 // Page fault linear address
 pub struct CR2;

@@ -2,6 +2,7 @@
 #![no_main]
 #![feature(asm, global_asm)]
 #![feature(abi_x86_interrupt)]
+#![feature(const_generics_defaults)]
 
 #![reexport_test_harness_main = "test"]
 
@@ -9,6 +10,7 @@ mod arch;
 mod multiboot;
 mod acpi;
 mod vga;
+mod memory;
 mod util;
 mod test;
 
@@ -32,13 +34,15 @@ pub extern "C" fn main(magic: multiboot::Magic, info: &'static multiboot::Info) 
 
     println!("Georgix v{}", VERSION);
 
-    if let Some(map) = info.memory_map() {
-        print!("Memory map:\n{}", map);
+    arch::initialize();
+
+    if let Some(memory_map) = info.memory_map() {
+        print!("Memory map:\n{}", memory_map);
+
+        memory::initialize(memory_map);
     } else {
         panic!("Memory map not found");
     }
-
-    arch::initialize();
 
     #[cfg(test)]
     test();
